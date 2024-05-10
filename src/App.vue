@@ -6,7 +6,7 @@
         <router-view ></router-view>
       </keep-alive>
     </transition>
-<!--    <svg-icon></svg-icon>-->
+    <svg-icon></svg-icon>
   </div>
 </template>
 

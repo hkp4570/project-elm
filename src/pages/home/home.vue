@@ -1,7 +1,11 @@
 <script>
+import HeadTop from '@/components/header/head.vue';
 import {cityGuess} from "@/service/getData";
 
 export default {
+  components:{
+    HeadTop,
+  },
   data() {
     return {
       guessCity: '', // 当前城市
@@ -19,6 +23,7 @@ export default {
 
 <template>
   <div>
+    <head-top></head-top>
     <nav class="city_nav">
       <div class="city_tip">
         <span>当前定位城市：</span>
