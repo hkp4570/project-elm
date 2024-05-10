@@ -23,7 +23,7 @@ export default {
 
 <template>
   <div>
-    <head-top></head-top>
+    <head-top signin-up="home"></head-top>
     <nav class="city_nav">
       <div class="city_tip">
         <span>当前定位城市：</span>
