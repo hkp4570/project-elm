@@ -10,6 +10,22 @@ export const cityGuess = () => fetch('/v1/cities', {
 })
 
 /**
+ * 获取热门城市列表
+ * @returns {Promise<unknown>|*}
+ */
+export const hotCity = () => fetch('/v1/cities', {
+    type: 'hot'
+})
+
+/**
+ * 获取所有城市列表
+ * @returns {Promise<unknown>|*}
+ */
+export const groupcity = () => fetch('/v1/cities', {
+    type: 'group'
+})
+
+/**
  * 获取用户信息
  * @returns {Promise<unknown>|*}
  */

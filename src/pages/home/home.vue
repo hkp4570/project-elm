@@ -1,6 +1,6 @@
 <script>
 import HeadTop from '@/components/header/head.vue';
-import {cityGuess} from "@/service/getData";
+import {cityGuess, groupcity, hotCity} from "@/service/getData";
 
 export default {
   components:{
@@ -10,6 +10,8 @@ export default {
     return {
       guessCity: '', // 当前城市
       guessCityId: '', // 当前城市ID
+      hotcity: [], // 热门城市
+      groupcity: {}, // 所有城市
     }
   },
   mounted() {
@@ -17,13 +19,37 @@ export default {
       this.guessCity = res.name;
       this.guessCityId = res.id;
     })
+    hotCity().then(res => {
+      this.hotcity = res;
+    })
+    groupcity().then(res => {
+      this.groupcity = res;
+    })
+  },
+  computed:{
+    sortgroupcity(){
+      let sortobj = {};
+      for (let i = 65; i < 90; i++) {
+        if(this.groupcity[String.fromCharCode(i)]){
+          sortobj[String.fromCharCode(i)] = this.groupcity[String.fromCharCode(i)];
+        }
+      }
+      return sortobj;
+    }
+  },
+  methods: {
+    reload() {
+      window.location.reload();
+    }
   }
 }
 </script>
 
 <template>
   <div>
-    <head-top signin-up="home"></head-top>
+    <head-top signin-up="home">
+      <span slot="logo" class="head_logo" @click="reload">ele.me</span>
+    </head-top>
     <nav class="city_nav">
       <div class="city_tip">
         <span>当前定位城市：</span>
@@ -36,6 +62,27 @@ export default {
         </svg>
       </router-link>
     </nav>
+    <section id="hot_city_container">
+      <h4 class="city_title">热门城市</h4>
+      <ul class="citylistul clear">
+        <router-link tag="li" v-for="item in hotcity" :key="item.id" :to="'/city/' + item.id">{{item.name}}</router-link>
+      </ul>
+    </section>
+    <section class="group_city_container">
+      <ul class="letter_classify">
+        <li v-for="(value,key,index) in sortgroupcity" :key="key" class="letter_classify_li">
+          <h4 class="city_title">
+            {{key}}
+          <span v-if="index === 0">（按字母排序）</span>
+          </h4>
+          <ul class="groupcity_name_container citylistul clear">
+            <router-link tag="li" v-for="item in value" :key="item.id" :to="'/city/' + item.id" class="ellipsis">
+              {{item.name}}
+            </router-link>
+          </ul>
+        </li>
+      </ul>
+    </section>
   </div>
 </template>
 
