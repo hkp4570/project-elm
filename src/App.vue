@@ -16,6 +16,11 @@ export default {
   name: 'App',
   components: {
     svgIcon
+  },
+  computed:{
+    userInfo(){
+      return this.$store.state.userInfo;
+    }
   }
 }
 </script>

@@ -1,7 +1,8 @@
 <script>
 import HeadTop from '@/components/header/head.vue';
 import AlterTip from "@/components/common/alterTip.vue";
-import {getcaptchas,accountLogin} from '@/service/getData';
+import {getcaptchas, accountLogin} from '@/service/getData';
+import {mapMutations, mapState} from 'vuex';
 
 export default {
   data() {
@@ -23,8 +24,15 @@ export default {
   },
   created() {
     this.getCaptchaCode();
+    if (this.login) {
+      this.$router.back();
+    }
+  },
+  computed: {
+    ...mapState(['login']),
   },
   methods: {
+    ...mapMutations(['record_userinfo']),
     async getCaptchaCode() {
       let res = await getcaptchas();
       this.captchaCodeImg = res.code;
@@ -33,35 +41,38 @@ export default {
       this.showPassword = !this.showPassword;
     },
     async mobileLogin() {
-      if(this.loginWay){
+      if (this.loginWay) {
         // 手机号登录
-      }else{
+      } else {
         // 密码登录
-        if(!this.userAccount){
+        if (!this.userAccount) {
           this.showAlert = true;
           this.alterText = '请输入手机号/邮箱/用户名';
           return;
-        }else if(!this.password){
+        } else if (!this.password) {
           this.showAlert = true;
           this.alterText = '请输入密码';
           return;
-        }else if (!this.codeNumber){
+        } else if (!this.codeNumber) {
           this.showAlert = true;
           this.alterText = '请输入验证码';
           return;
         }
-        this.userinfo = await accountLogin(this.userAccount,this.password,this.codeNumber);
+        this.userinfo = await accountLogin(this.userAccount, this.password, this.codeNumber);
       }
-      if(this.userinfo.user_id){
+      if (!this.userinfo.user_id) {
         this.showAlert = true;
         this.alterText = this.userinfo.message;
-        if(!this.loginWay){
+        if (!this.loginWay) {
           this.getCaptchaCode();
         }
+      } else {
+        this.record_userinfo(this.userinfo);
+        this.$router.go(-1);
       }
     },
     closeTip() {
-
+      this.showAlert = false;
     }
   }
 }
