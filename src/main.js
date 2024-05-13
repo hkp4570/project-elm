@@ -13,7 +13,7 @@ const router = new VueRouter({
     routes,
     mode: 'hash'
 })
-
+window.store = store;
 new Vue({
     router,
     store,

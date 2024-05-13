@@ -2,6 +2,7 @@
 const Home  = () => import(/* webpackChunkName: "Home" */ '../pages/home/home.vue')
 const City = () => import(/* webpackChunkName: "City" */ '../pages/city/city.vue')
 const Login = () => import(/* webpackChunkName: "Login" */ '../pages/login/login.vue')
+const Msite = () => import(/* webpackChunkName: "Msite" */ '../pages/msite/msite.vue')
 
 export default [
     {
@@ -11,9 +12,6 @@ export default [
     {
         path: '/home',
         component: Home,
-        meta:{
-            keepAlive: true
-        }
     },
     {
         path: '/city/:cityid',
@@ -22,5 +20,12 @@ export default [
     {
         path: '/login',
         component: Login
+    },
+    {
+        path: '/msite',
+        component: Msite,
+        meta: {
+            keepAlive: true
+        }
     }
 ]

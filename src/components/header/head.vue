@@ -48,6 +48,7 @@ export default {
       <span class="title_text">{{headTitle}}</span>
     </section>
     <slot name="changecity"></slot>
+    <slot name="msite-title"></slot>
   </header>
 </template>
 
