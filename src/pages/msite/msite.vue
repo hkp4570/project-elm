@@ -95,7 +95,16 @@ export default {
         </div>
         <div class="swiper-pagination"></div>
       </div>
+      <img src="@/assets/fl.svg" class="fl_back animation_opactiy" v-else alt=""/>
     </nav>
+    <div class="shop_list_container">
+      <header class="shop_header">
+        <svg class="shop_icon">
+          <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#shop"></use>
+        </svg>
+        <span class="shop_header_title">附近商家</span>
+      </header>
+    </div>
   </div>
 </template>
 
