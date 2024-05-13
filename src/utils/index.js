@@ -11,3 +11,8 @@ export const setStore = (name, content) => {
     }
     window.localStorage.setItem(name, content);
 }
+
+export const removeStore = name => {
+    if(!name) return;
+    window.localStorage.removeItem(name);
+}

@@ -1,6 +1,7 @@
 <script>
 import HeadTop from '@/components/header/head.vue';
 import {currentcity, searchplace} from '@/service/getData';
+import {setStore, getStore, removeStore} from '@/utils';
 
 export default {
   components: {
@@ -14,6 +15,7 @@ export default {
       placeNone: false, // 搜索无结果显示信息
       historytitle: true, // 默认显示历史记录，点击搜索后隐藏
       placelist: [], // 搜索结果
+      placeHistory: [], // 历史搜索记录
     }
   },
   mounted() {
@@ -22,8 +24,17 @@ export default {
     currentcity(this.cityid).then(res => {
       this.cityname = res.name;
     })
+    this.initData();
   },
   methods: {
+    initData() {
+      const placeHistory = getStore('placeHistory');
+      if (placeHistory) {
+        this.placelist = JSON.parse(placeHistory);
+      } else {
+        this.placelist = [];
+      }
+    },
     postpois() {
       if (this.inputValue) {
         searchplace(this.cityid, this.inputValue).then(res => {
@@ -33,8 +44,29 @@ export default {
         })
       }
     },
-    nextpage(){
-
+    nextpage(index, geohash) {
+      let history = getStore('placeHistory');
+      let choosePlace = this.placelist[index];
+      if (history) {
+        let checkrepeat = false;
+        this.placeHistory = JSON.parse(history);
+        this.placeHistory.forEach(item => {
+          if (item.geohash === geohash) {
+            checkrepeat = true;
+          }
+        })
+        if (!checkrepeat) {
+          this.placeHistory.push(choosePlace);
+        }
+      } else {
+        this.placeHistory.push(choosePlace);
+      }
+      setStore('placeHistory', this.placeHistory);
+      this.$router.push({path: '/msite', query: {geohash}});
+    },
+    clearAll() {
+      removeStore('placeHistory');
+      this.initData();
     }
   }
 }
@@ -56,11 +88,12 @@ export default {
     </form>
     <header v-if="historytitle" class="pois_search_history">搜索历史</header>
     <ul class="getpois_ul">
-      <li v-for="(item,index) in placelist" :key="index" @click="nextpage">
+      <li v-for="(item,index) in placelist" :key="index" @click="nextpage(index,item.geohash)">
         <h4 class="pois_name ellipsis">{{ item.name }}</h4>
         <p class="pois_address ellipsis">{{ item.address }}</p>
       </li>
     </ul>
+    <footer class="clear_all_history" v-if="historytitle && placelist.length" @click="clearAll">清空所有</footer>
     <div class="search_none_place" v-if="placeNone">很抱歉！无搜索结果</div>
   </div>
 </template>
