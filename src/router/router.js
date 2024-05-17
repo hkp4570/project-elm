@@ -3,6 +3,7 @@ const Home  = () => import(/* webpackChunkName: "Home" */ '../pages/home/home.vu
 const City = () => import(/* webpackChunkName: "City" */ '../pages/city/city.vue')
 const Login = () => import(/* webpackChunkName: "Login" */ '../pages/login/login.vue')
 const Msite = () => import(/* webpackChunkName: "Msite" */ '../pages/msite/msite.vue')
+const Profile = () => import(/* webpackChunkName: "Profile" */ '../pages/profile/profile.vue')
 
 export default [
     {
@@ -27,5 +28,9 @@ export default [
         meta: {
             keepAlive: true
         }
+    },
+    {
+        path: '/profile',
+        component: Profile,
     }
 ]
