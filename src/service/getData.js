@@ -117,3 +117,9 @@ export const accountLogin = (username, password, captcha_code) => new Promise(re
         })
     }, 100)
 })
+
+/**
+ * 退出登录
+ * @returns {Promise<unknown>|*}
+ */
+export const signout = () => fetch('/v2/signout');

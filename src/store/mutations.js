@@ -18,6 +18,10 @@ export default {
         state.login = true;
         setStore('user_id', info.user_id);
     },
+    out_login(state) {
+        state.userInfo = {};
+        state.login = false;
+    },
     setState(state, payload) {
         const keys = Object.keys(payload);
         keys.forEach(key => {
