@@ -22,6 +22,9 @@ export default {
         state.userInfo = {};
         state.login = false;
     },
+    reset_name(state, username) {
+        state.userInfo = Object.assign({}, state.userInfo, {username});
+    },
     setState(state, payload) {
         const keys = Object.keys(payload);
         keys.forEach(key => {

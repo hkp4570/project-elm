@@ -6,19 +6,21 @@ export default {
     return {}
   },
   props: {
-    headTitle:{
+    headTitle: {
       type: String,
     },
-    goBack:{
+    goBack: {
       type: Boolean,
       default: false
     },
-    signinUp:{
+    signinUp: {
       type: String,
     }
   },
   mounted() {
-    this.getUserInfo();
+    if (!this.userInfo || !this.userInfo.user_id) {
+      this.getUserInfo();
+    }
   },
   computed: {
     ...mapState(['userInfo'])
@@ -45,7 +47,7 @@ export default {
       <span class="login_span" v-else>登录|注册</span>
     </router-link>
     <section class="title_head ellipsis" v-if="headTitle">
-      <span class="title_text">{{headTitle}}</span>
+      <span class="title_text">{{ headTitle }}</span>
     </section>
     <slot name="changecity"></slot>
     <slot name="msite-title"></slot>
@@ -55,7 +57,7 @@ export default {
 <style scoped lang="scss">
 @import '../../style/mixin';
 
-#head_top{
+#head_top {
   background-color: $blue;
   position: fixed;
   z-index: 100;
@@ -63,30 +65,36 @@ export default {
   top: 0;
   @include wh(100%, 1.95rem);
 }
-.head_goback{
+
+.head_goback {
   left: 0.4rem;
   @include wh(0.6rem, 1rem);
   line-height: 2.2rem;
   margin-left: .4rem;
 }
-.head_login{
+
+.head_login {
   right: 0.55rem;
   @include sc(0.65rem, #fff);
   @include ct;
-  .login_span{
+
+  .login_span {
     color: #fff;
   }
-  .user_avatar{
+
+  .user_avatar {
     fill: #fff;
     @include wh(.8rem, .8rem);
   }
 }
-.title_head{
+
+.title_head {
   @include center;
   width: 50%;
   color: #fff;
   text-align: center;
-  .title_text{
+
+  .title_text {
     @include sc(0.8rem, #fff);
     text-align: center;
     font-weight: bold;

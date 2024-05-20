@@ -108,11 +108,11 @@ export default {
           </span>
         </div>
       </section>
-      <router-link to="/profile/info/setusername" class="info-router">
+      <router-link to="/profile/setusername" class="info-router">
         <section class="headportrait headportraitwo">
           <h2>用户名</h2>
           <div class="headportrait-div">
-            <p>{{ username }}</p>
+            <p>{{ userInfo?.username }}</p>
             <span class="headportrait-div-bottom">
                <svg fill="#d8d8d8">
                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#arrow-right"></use>

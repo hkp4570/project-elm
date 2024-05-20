@@ -5,6 +5,7 @@ const Msite = () => import(/* webpackChunkName: "Msite" */ '../pages/msite/msite
 const Profile = () => import(/* webpackChunkName: "Profile" */ '../pages/profile/profile.vue')
 const Info = () => import(/* webpackChunkName: "Info" */ '../pages/profile/children/info.vue')
 const ProfileLayout = () => import(/* webpackChunkName: "ProfileLayout" */ '../pages/profile/profileLayout.vue')
+const SetUsername = () => import(/* webpackChunkName: "SetUsername" */ '../pages/profile/children/setUsername.vue')
 
 export default [
     {
@@ -40,7 +41,11 @@ export default [
             },
             {
                 path: 'info',
-                component: Info
+                component: Info,
+            },
+            {
+                path: 'setusername',
+                component: SetUsername,
             }
         ]
     }
