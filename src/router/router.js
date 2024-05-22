@@ -6,6 +6,7 @@ const Profile = () => import(/* webpackChunkName: "Profile" */ '../pages/profile
 const Info = () => import(/* webpackChunkName: "Info" */ '../pages/profile/children/info.vue')
 const ProfileLayout = () => import(/* webpackChunkName: "ProfileLayout" */ '../pages/profile/profileLayout.vue')
 const SetUsername = () => import(/* webpackChunkName: "SetUsername" */ '../pages/profile/children/setUsername.vue')
+const Forget = () => import(/* webpackChunkName: "Forget" */ '../pages/profile/children/forget.vue')
 
 export default [
     {
@@ -46,6 +47,10 @@ export default [
             {
                 path: 'setusername',
                 component: SetUsername,
+            },
+            {
+                path: 'forget',
+                component: Forget,
             }
         ]
     }
