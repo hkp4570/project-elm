@@ -49,6 +49,7 @@ export default {
     <section class="title_head ellipsis" v-if="headTitle">
       <span class="title_text">{{ headTitle }}</span>
     </section>
+    <slot name="edit"></slot>
     <slot name="changecity"></slot>
     <slot name="msite-title"></slot>
   </header>

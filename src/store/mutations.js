@@ -25,6 +25,13 @@ export default {
     reset_name(state, username) {
         state.userInfo = Object.assign({}, state.userInfo, {username});
     },
+    // 新增的地址 是可以移除的
+    add_removeList(state, addressObj) {
+        state.removeAddress = [addressObj, ...state.removeAddress];
+    },
+    save_removeList(state, addressList) {
+        state.removeAddress = addressList;
+    },
     setState(state, payload) {
         const keys = Object.keys(payload);
         keys.forEach(key => {

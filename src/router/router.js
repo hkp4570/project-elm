@@ -7,6 +7,9 @@ const Info = () => import(/* webpackChunkName: "Info" */ '../pages/profile/child
 const ProfileLayout = () => import(/* webpackChunkName: "ProfileLayout" */ '../pages/profile/profileLayout.vue')
 const SetUsername = () => import(/* webpackChunkName: "SetUsername" */ '../pages/profile/children/setUsername.vue')
 const Forget = () => import(/* webpackChunkName: "Forget" */ '../pages/profile/children/forget.vue')
+const Address = () => import(/* webpackChunkName: "Address" */ '../pages/profile/children/address.vue')
+const AddAddress = () => import(/* webpackChunkName: "AddAddress" */ '../pages/profile/children/addAddress.vue')
+const AddAddressDetail = () => import(/* webpackChunkName: "AddAddressDetail" */ '../pages/profile/children/addAddressDetail.vue')
 
 export default [
     {
@@ -51,6 +54,18 @@ export default [
             {
                 path: 'forget',
                 component: Forget,
+            },
+            {
+                path: 'address',
+                component: Address,
+            },
+            {
+                path: 'addaddress',
+                component: AddAddress,
+            },
+            {
+                path: 'addaddressdetail',
+                component: AddAddressDetail,
             }
         ]
     }

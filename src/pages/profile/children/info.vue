@@ -121,7 +121,7 @@ export default {
           </div>
         </section>
       </router-link>
-      <router-link to="/profile/info/address" class="info-router">
+      <router-link to="/profile/address" class="info-router">
         <section class="headportrait headportraitwo headportraithree">
           <h2>收货地址</h2>
           <div class="headportrait-div">

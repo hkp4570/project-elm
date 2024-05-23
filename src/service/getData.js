@@ -134,3 +134,56 @@ export const changePassword = (username, oldpassWord, newpassword, confirmpasswo
     confirmpassword,
     captcha_code
 }, 'POST');
+
+/**
+ * 添加地址
+ * @param userId
+ * @param address
+ * @param address_detail
+ * @param geohash
+ * @param name
+ * @param phone
+ * @param phone_bk
+ * @param poi_type
+ * @param sex
+ * @param tag
+ * @param tag_type
+ * @returns {Promise<unknown>|*}
+ */
+export const postAddAddress = (userId, address, address_detail, geohash, name, phone, phone_bk, poi_type, sex, tag, tag_type) => fetch('/v1/users/' + userId + '/addresses', {
+    address,
+    address_detail,
+    geohash,
+    name,
+    phone,
+    phone_bk,
+    poi_type,
+    sex,
+    tag,
+    tag_type,
+}, 'POST');
+
+/**
+ * 搜索周边地址
+ * @param keyword
+ * @returns {Promise<unknown>|*}
+ */
+export const searchNearby = keyword => fetch('/v1/pois', {
+    type: 'nearby',
+    keyword
+});
+
+/**
+ * 删除地址
+ * @param userid
+ * @param addressid
+ * @returns {Promise<unknown>|*}
+ */
+export const deleteAddress = (userid, addressid) => fetch('/v1/users/' + userid + '/addresses/' + addressid, {}, 'DELETE')
+
+/**
+ * 获取地址列表
+ * @param user_id
+ * @returns {Promise<unknown>|*}
+ */
+export const getAddressList = (user_id) => fetch('/v1/users/' + user_id + '/addresses')
