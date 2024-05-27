@@ -86,7 +86,7 @@ export default {
             </span>
             <span class="info-data-bottom">我的余额</span>
           </router-link>
-          <router-link to="" tag="li" class="info-data-link">
+          <router-link to="/discount" tag="li" class="info-data-link">
             <span class="info-data-top">
               <b>{{ count }}</b>
             </span>

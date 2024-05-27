@@ -187,3 +187,29 @@ export const deleteAddress = (userid, addressid) => fetch('/v1/users/' + userid 
  * @returns {Promise<unknown>|*}
  */
 export const getAddressList = (user_id) => fetch('/v1/users/' + user_id + '/addresses')
+
+/**
+ * 获取红包
+ * @param id
+ * @returns {Promise<unknown>|*}
+ */
+export const getHongbaoNum = id => fetch('/promotion/v2/users/' + id + '/hongbaos?limit=20&offset=0');
+
+/**
+ * 获取过期红包
+ * @param id
+ * @returns {Promise<unknown>|*}
+ */
+export const getExpired = id => fetch('/promotion/v2/users/' + id + '/expired_hongbaos?limit=20&offset=0');
+
+/**
+ * 兑换红包
+ * @param id
+ * @param exchange_code
+ * @param captcha_code
+ * @returns {Promise<unknown>|*}
+ */
+export const exChangeHongbao = (id, exchange_code, captcha_code) => fetch('/v1/users/' + id + '/hongbao/exchange', {
+    exchange_code,
+    captcha_code,
+}, 'POST');

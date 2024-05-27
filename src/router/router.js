@@ -12,6 +12,12 @@ const AddAddress = () => import(/* webpackChunkName: "AddAddress" */ '../pages/p
 const AddAddressDetail = () => import(/* webpackChunkName: "AddAddressDetail" */ '../pages/profile/children/addAddressDetail.vue')
 const Balance = () => import(/* webpackChunkName: "Balance" */ '../pages/balance/balance.vue')
 const BalanceDetail = () => import(/* webpackChunkName: "BalanceDetail" */ '../pages/balance/children/detail.vue')
+const Discount = () => import(/* webpackChunkName: "Discount" */ '../pages/discount/discount.vue')
+const HbDescription = () => import(/* webpackChunkName: "HbDescription" */ '../pages/discount/children/hbDescription.vue')
+const HbHistory = () => import(/* webpackChunkName: "HbHistory" */ '../pages/discount/children/hbHistory.vue')
+const Commend = () => import(/* webpackChunkName: "Commend" */ '../pages/discount/children/commend.vue')
+const Exchange = () => import(/* webpackChunkName: "Exchange" */ '../pages/discount/children/exchange.vue')
+const Coupon = () => import(/* webpackChunkName: "Coupon" */ '../pages/discount/children/coupon.vue')
 
 export default [
     {
@@ -82,6 +88,36 @@ export default [
             {
                 path: 'detail',
                 component: BalanceDetail,
+            }
+        ]
+    },
+    {
+        path: '/discount',
+        component: BaseLayout,
+        children: [
+            {
+                path: '',
+                component: Discount,
+            },
+            {
+                path: 'hbDescription',
+                component: HbDescription,
+            },
+            {
+                path: 'hbHistory',
+                component: HbHistory,
+            },
+            {
+                path: 'commend',
+                component: Commend,
+            },
+            {
+                path: 'exchange',
+                component: Exchange,
+            },
+            {
+                path: 'coupon',
+                component: Coupon,
             }
         ]
     }
