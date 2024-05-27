@@ -4,12 +4,14 @@ const Login = () => import(/* webpackChunkName: "Login" */ '../pages/login/login
 const Msite = () => import(/* webpackChunkName: "Msite" */ '../pages/msite/msite.vue')
 const Profile = () => import(/* webpackChunkName: "Profile" */ '../pages/profile/profile.vue')
 const Info = () => import(/* webpackChunkName: "Info" */ '../pages/profile/children/info.vue')
-const ProfileLayout = () => import(/* webpackChunkName: "ProfileLayout" */ '../pages/profile/profileLayout.vue')
+const BaseLayout = () => import(/* webpackChunkName: "BaseLayout" */ '../layouts/baseLayout.vue')
 const SetUsername = () => import(/* webpackChunkName: "SetUsername" */ '../pages/profile/children/setUsername.vue')
 const Forget = () => import(/* webpackChunkName: "Forget" */ '../pages/profile/children/forget.vue')
 const Address = () => import(/* webpackChunkName: "Address" */ '../pages/profile/children/address.vue')
 const AddAddress = () => import(/* webpackChunkName: "AddAddress" */ '../pages/profile/children/addAddress.vue')
 const AddAddressDetail = () => import(/* webpackChunkName: "AddAddressDetail" */ '../pages/profile/children/addAddressDetail.vue')
+const Balance = () => import(/* webpackChunkName: "Balance" */ '../pages/balance/balance.vue')
+const BalanceDetail = () => import(/* webpackChunkName: "BalanceDetail" */ '../pages/balance/children/detail.vue')
 
 export default [
     {
@@ -37,7 +39,7 @@ export default [
     },
     {
         path: '/profile',
-        component: ProfileLayout,
+        component: BaseLayout,
         children: [
             {
                 path: '',
@@ -66,6 +68,20 @@ export default [
             {
                 path: 'addaddressdetail',
                 component: AddAddressDetail,
+            }
+        ]
+    },
+    {
+        path: '/balance',
+        component: BaseLayout,
+        children: [
+            {
+                path: '',
+                component: Balance,
+            },
+            {
+                path: 'detail',
+                component: BalanceDetail,
             }
         ]
     }

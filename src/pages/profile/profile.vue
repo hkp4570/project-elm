@@ -27,21 +27,21 @@ export default {
   },
   methods: {
     initData() {
-      if(this.userInfo && this.userInfo.user_id){
+      if (this.userInfo && this.userInfo.user_id) {
         this.avatar = this.userInfo.avatar;
         this.username = this.userInfo.username;
         this.mobile = this.userInfo.mobile || '暂无绑定手机号';
         this.balance = this.userInfo.balance;
         this.count = this.userInfo.gift_amount;
         this.pointNumber = this.userInfo.point;
-      }else{
+      } else {
         this.username = '登录/注册';
         this.mobile = '暂无绑定手机号';
       }
     }
   },
-  watch:{
-    userInfo(){
+  watch: {
+    userInfo() {
       this.initData();
     }
   }
@@ -80,7 +80,7 @@ export default {
       </section>
       <section class="info-data">
         <ul class="clear">
-          <router-link to="" tag="li" class="info-data-link">
+          <router-link to="/balance" tag="li" class="info-data-link">
             <span class="info-data-top">
               <b>{{ parseInt(balance).toFixed(2) }}元</b>
             </span>
