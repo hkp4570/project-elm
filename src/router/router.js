@@ -18,6 +18,9 @@ const HbHistory = () => import(/* webpackChunkName: "HbHistory" */ '../pages/dis
 const Commend = () => import(/* webpackChunkName: "Commend" */ '../pages/discount/children/commend.vue')
 const Exchange = () => import(/* webpackChunkName: "Exchange" */ '../pages/discount/children/exchange.vue')
 const Coupon = () => import(/* webpackChunkName: "Coupon" */ '../pages/discount/children/coupon.vue')
+const Points = () => import(/* webpackChunkName: "Points" */ '../pages/points/points.vue')
+const PointsDetail = () => import(/* webpackChunkName: "PointsDetail" */ '../pages/points/children/detail.vue')
+
 
 export default [
     {
@@ -118,6 +121,20 @@ export default [
             {
                 path: 'coupon',
                 component: Coupon,
+            }
+        ]
+    },
+    {
+        path: '/points',
+        component: BaseLayout,
+        children: [
+            {
+                path: '',
+                component: Points,
+            },
+            {
+                path: 'detail',
+                component: PointsDetail,
             }
         ]
     }

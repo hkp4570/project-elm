@@ -92,7 +92,7 @@ export default {
             </span>
             <span class="info-data-bottom">我的优惠</span>
           </router-link>
-          <router-link to="" tag="li" class="info-data-link">
+          <router-link to="/points" tag="li" class="info-data-link">
             <span class="info-data-top">
               <b>{{ pointNumber }}</b>
             </span>
