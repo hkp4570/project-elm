@@ -1,5 +1,7 @@
 <script>
 import HeadTop from '@/components/header/head.vue';
+import FootGuide from "@/components/footer/footGuide.vue";
+import ShopList from "@/components/common/shopList.vue";
 import {cityGuess, msiteAddress, msiteFoodTypes} from "@/service/getData";
 import {mapMutations} from "vuex";
 import '@/plugins/swiper.min.js';
@@ -7,7 +9,9 @@ import '@/style/swiper.min.css';
 
 export default {
   components: {
-    HeadTop
+    HeadTop,
+    FootGuide,
+    ShopList,
   },
   data() {
     return {
@@ -32,6 +36,7 @@ export default {
     // 获取位置信息
     const res = await msiteAddress(this.geohash);
     this.msiteTitle = res.name;
+    // 设置当前经纬度
     this.setState({
       latitude: res.latitude,
       longitude: res.longitude,
@@ -41,7 +46,6 @@ export default {
   mounted() {
     // 获取导航食品类型列表
     msiteFoodTypes(this.geohash).then(res => {
-      console.log(res, 'res');
       const resLength = res.length;
       const resArr = [...res];
       const foodArr = [];
@@ -59,8 +63,8 @@ export default {
   },
   methods: {
     ...mapMutations(['setState']),
-    getCategoryId(url){
-      console.log(url,'url');
+    getCategoryId(url) {
+      // console.log(url, 'url');
     }
   }
 }
@@ -84,8 +88,8 @@ export default {
         <div class="swiper-wrapper">
           <div class="swiper-slide food_types_container" v-for="(item,index) in foodTypes" :key="index">
             <RouterLink
-              :to="{path: '/food', query: {geohash, title: foodItem.title, restaurant_category_id: getCategoryId(foodItem.link)}}"
-              class="link_to_food" v-for="foodItem in item" :key="foodItem.id">
+                :to="{path: '/food', query: {geohash, title: foodItem.title, restaurant_category_id: getCategoryId(foodItem.link)}}"
+                class="link_to_food" v-for="foodItem in item" :key="foodItem.id">
               <figure>
                 <img :src="imgBaseUrl + foodItem.image_url" alt="">
                 <figcaption>{{ foodItem.title }}</figcaption>
@@ -104,7 +108,9 @@ export default {
         </svg>
         <span class="shop_header_title">附近商家</span>
       </header>
+      <shop-list v-if="hasGetData" :geohash="geohash"></shop-list>
     </div>
+    <foot-guide></foot-guide>
   </div>
 </template>
 
