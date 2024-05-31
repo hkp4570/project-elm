@@ -1382,3 +1382,14 @@ export const searchRestaurant = (geohash, keyword) => new Promise(resolve => {
         resolve(data);
     }, 1000)
 });
+
+/**
+ * 获取food页面的商品分类
+ * @param latitude
+ * @param longitude
+ * @returns {Promise<unknown>|*}
+ */
+export const foodCategory = (latitude, longitude) => fetch('/shopping/v2/restaurant/category', {
+    latitude,
+    longitude
+});

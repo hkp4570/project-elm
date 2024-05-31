@@ -21,7 +21,7 @@ const Coupon = () => import(/* webpackChunkName: "Coupon" */ '../pages/discount/
 const Points = () => import(/* webpackChunkName: "Points" */ '../pages/points/points.vue')
 const PointsDetail = () => import(/* webpackChunkName: "PointsDetail" */ '../pages/points/children/detail.vue')
 const Search = () => import(/* webpackChunkName: "Search" */ '../pages/search/search.vue')
-
+const Food = () => import(/* webpackChunkName: "Food" */ '../pages/food/food.vue')
 
 export default [
     {
@@ -142,5 +142,9 @@ export default [
     {
         path: '/search/:geohash',
         component: Search,
+    },
+    {
+        path: '/food',
+        component: Food,
     }
 ]

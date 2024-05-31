@@ -6,7 +6,7 @@ import {shopList} from "@/service/getData";
 import Points from "@/pages/points/points.vue";
 
 export default {
-  props: ['geohash', 'restaurantCategoryId'],
+  props: ['geohash', 'restaurantCategoryId', 'restaurantCategoryIds'],
   components: {
     Points,
     Loading,
@@ -84,6 +84,20 @@ export default {
         this.showBackStatus = false;
       }
     },
+    // props变化后重新获取数据
+    async listenPropChange() {
+      this.showLoading = true;
+      this.offset = 0;
+      const data = await shopList(this.latitude, this.longitude, this.offset, '', this.restaurantCategoryIds);
+      this.showLoading = false;
+      this.shopListArr = [...data];
+    }
+  },
+  watch: {
+    // 监听父级传来的restaurantCategoryIds，当值发生变化的时候重新获取餐馆数据，作用于排序和筛选
+    restaurantCategoryIds() {
+      this.listenPropChange();
+    }
   }
 }
 </script>

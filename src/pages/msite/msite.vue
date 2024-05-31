@@ -52,6 +52,7 @@ export default {
       for (let i = 0, j = 0; i < resLength; i += 8, j++) {
         foodArr[j] = resArr.splice(0, 8);
       }
+      console.log(foodArr, 'foodArr')
       this.foodTypes = foodArr;
     }).then(() => {
       // 初始化Swiper
@@ -64,7 +65,13 @@ export default {
   methods: {
     ...mapMutations(['setState']),
     getCategoryId(url) {
-      // console.log(url, 'url');
+      // eleme://restaurants?filter_key=%7B%22category_schema%22%3A%7B%22category_name%22%3A%22%5Cu751c%5Cu54c1%5C
+      let urlData = decodeURIComponent(url.split('=')[1].replace('&target_name', ''));
+      if (/restaurant_category_id/gi.test(urlData)) {
+        return JSON.parse(urlData).restaurant_category_id.id
+      } else {
+        return ''
+      }
     }
   }
 }
