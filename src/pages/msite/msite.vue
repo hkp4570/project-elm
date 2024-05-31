@@ -73,7 +73,7 @@ export default {
 <template>
   <div>
     <head-top signin-up="msite">
-      <router-link slot="search" to="/search/geohash" class="link_search">
+      <router-link slot="search" :to="'/search/'+geohash" class="link_search">
         <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" version="1.1">
           <circle cx="8" cy="8" r="7" stroke="rgb(255,255,255)" stroke-width="1" fill="none"/>
           <line x1="14" y1="14" x2="20" y2="20" style="stroke:rgb(255,255,255);stroke-width:2"/>

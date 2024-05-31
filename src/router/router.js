@@ -20,6 +20,7 @@ const Exchange = () => import(/* webpackChunkName: "Exchange" */ '../pages/disco
 const Coupon = () => import(/* webpackChunkName: "Coupon" */ '../pages/discount/children/coupon.vue')
 const Points = () => import(/* webpackChunkName: "Points" */ '../pages/points/points.vue')
 const PointsDetail = () => import(/* webpackChunkName: "PointsDetail" */ '../pages/points/children/detail.vue')
+const Search = () => import(/* webpackChunkName: "Search" */ '../pages/search/search.vue')
 
 
 export default [
@@ -137,5 +138,9 @@ export default [
                 component: PointsDetail,
             }
         ]
+    },
+    {
+        path: '/search/:geohash',
+        component: Search,
     }
 ]
