@@ -52,7 +52,6 @@ export default {
       for (let i = 0, j = 0; i < resLength; i += 8, j++) {
         foodArr[j] = resArr.splice(0, 8);
       }
-      console.log(foodArr, 'foodArr')
       this.foodTypes = foodArr;
     }).then(() => {
       // 初始化Swiper
