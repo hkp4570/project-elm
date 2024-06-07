@@ -22,6 +22,7 @@ const Points = () => import(/* webpackChunkName: "Points" */ '../pages/points/po
 const PointsDetail = () => import(/* webpackChunkName: "PointsDetail" */ '../pages/points/children/detail.vue')
 const Search = () => import(/* webpackChunkName: "Search" */ '../pages/search/search.vue')
 const Food = () => import(/* webpackChunkName: "Food" */ '../pages/food/food.vue')
+const Shop = () => import(/* webpackChunkName: "Shop" */ '../pages/shop/shop.vue')
 
 export default [
     {
@@ -146,5 +147,15 @@ export default [
     {
         path: '/food',
         component: Food,
+    },
+    {
+        path: '/shop',
+        component: BaseLayout,
+        children: [
+            {
+                path: '',
+                component: Shop,
+            }
+        ]
     }
 ]

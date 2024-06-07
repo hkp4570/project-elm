@@ -1416,3 +1416,24 @@ export const foodActivity = (latitude, longitude) => fetch('/shopping/v1/restaur
     longitude,
     kw: ''
 });
+
+/**
+ * 获取food页面的商家信息
+ * @param shopid
+ * @param latitude
+ * @param longitude
+ * @returns {Promise<unknown>|*}
+ */
+export const shopDetails = (shopid, latitude, longitude) => fetch('/shopping/restaurant/' + shopid, {
+    latitude,
+    longitude: longitude + '&extras[]=activities&extras[]=album&extras[]=license&extras[]=identification&extras[]=statistics'
+});
+
+/**
+ * 获取food页面的商家菜单列表
+ * @param restaurant_id
+ * @returns {Promise<unknown>|*}
+ */
+export const foodMenu = restaurant_id => fetch('/shopping/v2/menu', {
+    restaurant_id
+});

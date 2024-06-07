@@ -111,7 +111,8 @@ export default {
 <template>
   <div class="shoplist_container">
     <ul v-if="shopListArr.length">
-      <router-link to="" v-for="item in shopListArr" :key="item.id" tag="li" class="shop_li">
+      <router-link :to="{path: 'shop', query:{geohash, id:item.id}}" v-for="item in shopListArr" :key="item.id" tag="li"
+                   class="shop_li">
         <section>
           <img :src="imgBaseUrl + item.image_path" class="shop_img" alt="">
         </section>
