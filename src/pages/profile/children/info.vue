@@ -28,6 +28,9 @@ export default {
   beforeDestroy() {
     clearTimeout(this.timer);
   },
+  mounted() {
+    console.log(this.userInfo)
+  },
   methods: {
     ...mapMutations(['out_login']),
     exitlogin() {
@@ -112,7 +115,7 @@ export default {
         <section class="headportrait headportraitwo">
           <h2>用户名</h2>
           <div class="headportrait-div">
-            <p>{{ userInfo?.username }}</p>
+            <p>{{ this.userInfo.username }}</p>
             <span class="headportrait-div-bottom">
                <svg fill="#d8d8d8">
                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#arrow-right"></use>

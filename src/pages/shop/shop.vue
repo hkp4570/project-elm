@@ -19,6 +19,8 @@ export default {
       TitleDetailIndex: null, // 食品列表头部详情
       categoryNum: [], // 已加入购物车数量
       menuIndex: 0, // 选中的菜单索引值
+      totalPrice: 0, // 总价格
+      receiveInCart: false, //
     }
   },
   mixins: [getImgPath],
@@ -29,6 +31,18 @@ export default {
     ...mapState(['latitude', "longitude"]),
     promotionInfo() {
       return this.shopDetailData.promotion_info || '欢迎光临，用餐高峰期请提前下单，谢谢。';
+    },
+    // 购物车中商品总数量
+    totalNum() {
+
+    },
+    // 还差多少元起送
+    minimumOrderAmount(){
+      if(this.shopDetailData){
+        return this.shopDetailData.float_minimum_order_amount - this.totalPrice;
+      }else{
+        return null;
+      }
     }
   },
   created() {
@@ -67,6 +81,9 @@ export default {
     // 选中菜单
     chooseMenu(index) {
       this.menuIndex = index;
+    },
+    toggleCartList(){
+
     }
   }
 }
@@ -161,6 +178,75 @@ export default {
                   <span class="category_num" v-if="categoryNum[index] && item.type == 1">{{ categoryNum[index] }}</span>
                 </li>
               </ul>
+            </section>
+            <section class="menu_right" ref="menuFoodList">
+              <ul>
+                <li v-for="(item,index) in menuList" :key="index">
+                  <header class="menu_detail_header">
+                    <section class="menu_detail_header_left">
+                      <strong class="menu_item_title">{{ item.name }}</strong>
+                      <span class="menu_item_description">{{ item.description }}</span>
+                    </section>
+                    <span class="menu_detail_header_right" @click="showTitleDetail(index)"></span>
+                    <p class="description_tip" v-if="index == TitleDetailIndex">
+                      <span>{{ item.name }}</span>
+                      {{item.description}}
+                    </p>
+                  </header>
+                  <section v-for="(foods,foodIndex) in item.foods" :key="foodIndex" class="menu_detail_list">
+                      <router-link :to="{path: '', query:{}}" tag="div" class="menu_detail_link">
+                        <section class="menu_food_img">
+                          <img :src="imgBaseUrl + foods.image_path" alt="">
+                        </section>
+                        <section class="menu_food_description">
+                          <h3 class="food_description_head">
+                            <strong class="description_foodname">{{foods.name}}</strong>
+                            <ul class="attributes_ul" v-if="foods.attributes.length">
+                              <li v-if="attribute" v-for="(attribute, foodindex) in foods.attributes" :key="foodindex" :style="{color: '#' + attribute.icon_color,borderColor:'#' + attribute.icon_color}" :class="{attribute_new: attribute.icon_name == '新'}">
+                                <p :style="{color: attribute.icon_name == '新'? '#fff' : '#' + attribute.icon_color}">{{attribute.icon_name == '新'? '新品':attribute.icon_name}}</p>
+                              </li>
+                            </ul>
+                          </h3>
+                          <p class="food_description_content">{{foods.description}}</p>
+                          <p class="food_description_sale_rating">
+                            <span>月售{{foods.month_sales}}份</span>
+                            <span>好评率{{foods.satisfy_rate}}%</span>
+                          </p>
+                          <p v-if="foods.activity" class="food_activity">
+                            <span :style="{color: '#' + foods.activity.image_text_color,borderColor:'#' +foods.activity.icon_color}">{{foods.activity.image_text}}</span>
+                          </p>
+                        </section>
+                      </router-link>
+                      <footer class="menu_detail_footer">
+                        <section class="food_price">
+                          <span>¥</span>
+                          <span>{{foods.specfoods[0].price}}</span>
+                          <span v-if="foods.specifications.length">起</span>
+<!--                          todo: 购物车-->
+<!--                          <buy-cart>-->
+                        </section>
+                      </footer>
+                  </section>
+                </li>
+              </ul>
+            </section>
+          </section>
+          <section class="buy_cart_container">
+            <section class="cart_icon_num" @click.stop="toggleCartList">
+              <div class="cart_icon_container" ref="cartContainer" :class="{cart_icon_activity: totalPrice > 0, move_in_cart: receiveInCart}">
+                <span class="cart_list_length" v-if="totalNum">{{totalNum}}</span>
+                <svg class="cart_icon">
+                  <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#cart-icon"></use>
+                </svg>
+              </div>
+              <div class="cart_num">
+                <div>¥{{totalPrice}}</div>
+                <div>配送费¥{{deliveryFee}}</div>
+              </div>
+            </section>
+            <section class="gotopay" :class="{gotopay_acitvity: minimumOrderAmount <= 0}">
+              <span class="gotopay_button_style" v-if="minimumOrderAmount > 0">还差¥{{minimumOrderAmount}}元起送</span>
+              <router-link :to="{path:'',query:{}}" class="gotopay_button_style" v-else>去结算</router-link>
             </section>
           </section>
         </section>

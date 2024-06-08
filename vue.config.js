@@ -5,7 +5,7 @@ module.exports = defineConfig({
     transpileDependencies: true, devServer: {
         proxy: {
             "/v1": {
-                target: "http://cangdu.org:8001"
+                target: "http://cangdu.org:8000"
             }
         }
     }, configureWebpack: {
