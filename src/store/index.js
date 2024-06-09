@@ -14,6 +14,7 @@ const state = {
     longitude: '', // 当前位置经度
     addAddress: '', // 新增地址
     removeAddress: [],
+    cartList: {}, // 加入购物车的商品列表
 }
 
 export default new Vuex.Store({

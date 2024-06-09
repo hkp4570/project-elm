@@ -3,6 +3,8 @@ import {mapState, mapMutations} from 'vuex';
 import {imgBaseUrl} from '@/utils/index.js';
 import {msiteAddress, shopDetails, foodMenu} from '@/service/getData';
 import RatingStar from "@/components/common/ratingStar.vue";
+import BuyCart from "@/components/common/buyCart.vue";
+import Loading from '@/components/common/loading.vue';
 import {getImgPath} from "@/mixin/minix";
 
 export default {
@@ -21,14 +23,22 @@ export default {
       menuIndex: 0, // 选中的菜单索引值
       totalPrice: 0, // 总价格
       receiveInCart: false, //
+      showSpace: false, // 食品规格显隐
+      spaceIndex: 0, //当前选中的规格索引值
+      choosedFoods: null, //当前选中食品数据
+      showMoveDot: [],
+      elLeft: 0,
+      elBottom: 0,
     }
   },
   mixins: [getImgPath],
   components: {
     RatingStar,
+    BuyCart,
+    Loading,
   },
   computed: {
-    ...mapState(['latitude', "longitude"]),
+    ...mapState(['latitude', "longitude", "cartList"]),
     promotionInfo() {
       return this.shopDetailData.promotion_info || '欢迎光临，用餐高峰期请提前下单，谢谢。';
     },
@@ -37,12 +47,16 @@ export default {
 
     },
     // 还差多少元起送
-    minimumOrderAmount(){
-      if(this.shopDetailData){
+    minimumOrderAmount() {
+      if (this.shopDetailData) {
         return this.shopDetailData.float_minimum_order_amount - this.totalPrice;
-      }else{
+      } else {
         return null;
       }
+    },
+    // 当前商店的购物信息
+    shopCart() {
+      return {...this.cartList[this.shopId]};
     }
   },
   created() {
@@ -53,7 +67,7 @@ export default {
     this.initData();
   },
   methods: {
-    ...mapMutations(['setState']),
+    ...mapMutations(['setState', 'add_cart']),
     async initData() {
       if (!this.latitude) {
         const res = await msiteAddress(this.geohash);
@@ -64,8 +78,14 @@ export default {
       }
       // 获取商铺详情
       this.shopDetailData = await shopDetails(this.shopId, this.latitude, this.longitude);
-      this.menuList = await foodMenu(this.shopId);
-      console.log(this.menuList);
+      // 获取的是该商铺的食品分类
+      const menuList = await foodMenu(this.shopId);
+      this.menuList = menuList.slice(0, 3).map(menu => {
+        return {
+          ...menu,
+          foods: menu.foods.slice(0, 10),
+        }
+      })
       this.showLoading = false;
     },
     showActivitiesFun() {
@@ -82,8 +102,93 @@ export default {
     chooseMenu(index) {
       this.menuIndex = index;
     },
-    toggleCartList(){
+    toggleCartList() {
 
+    },
+    // 显示规格列表
+    showChooseList(foods) {
+      if (foods) {
+        this.choosedFoods = foods;
+      }
+      this.showSpace = !this.showSpace;
+      this.spaceIndex = 0;
+    },
+    // 选择规格的索引
+    chooseSpecs(index) {
+      this.spaceIndex = index;
+    },
+    // 加入购物车
+    addSpace(category_id, item_id, food_id, name, price, specs, packing_fee, sku_id, stock) {
+      this.add_cart({
+        shopid: this.shopId,
+        category_id,
+        item_id,
+        food_id,
+        name,
+        price,
+        specs,
+        packing_fee,
+        sku_id,
+        stock
+      });
+    },
+    initCategoryNum() {
+      let newArr = [];
+      let cartFoodNum = 0;
+      this.totalPrice = 0;
+      this.cartFoodList = [];
+      this.menuList.forEach((item, index) => {
+        if (this.shopCart && this.shopCart[item.foods[0].category_id]) {
+          let num = 0;
+          Object.keys(this.shopCart[item.foods[0].category_id]).forEach(itemid => {
+            Object.keys(this.shopCart[item.foods[0].category_id][itemid]).forEach(foodid => {
+              let foodItem = this.shopCart[item.foods[0].category_id][itemid][foodid];
+              num += foodItem.num;
+              if (item.type == 1) {
+                this.totalPrice += foodItem.num * foodItem.price;
+                if (foodItem.num > 0) {
+                  this.cartFoodList[cartFoodNum] = {};
+                  this.cartFoodList[cartFoodNum].category_id = item.foods[0].category_id;
+                  this.cartFoodList[cartFoodNum].item_id = itemid;
+                  this.cartFoodList[cartFoodNum].food_id = foodid;
+                  this.cartFoodList[cartFoodNum].num = foodItem.num;
+                  this.cartFoodList[cartFoodNum].price = foodItem.price;
+                  this.cartFoodList[cartFoodNum].name = foodItem.name;
+                  this.cartFoodList[cartFoodNum].specs = foodItem.specs;
+                  cartFoodNum++;
+                }
+              }
+            })
+          })
+          newArr[index] = num;
+        } else {
+          newArr[index] = 0;
+        }
+      })
+      this.totalPrice = this.totalPrice.toFixed(2);
+      this.categoryNum = [...newArr];
+    },
+    // 显示下落圆球
+    showMoveDotFun(showMoveDot, elLeft, elBottom) {
+      this.showMoveDot = [...this.showMoveDot, ...showMoveDot];
+      this.elLeft = elLeft;
+      this.elBottom = elBottom;
+    },
+    beforeEnter() {
+    },
+    afterEnter() {
+    },
+  },
+  watch: {
+    showLoading(value) {
+      if (!value) { // 数据加载完成
+        this.$nextTick(() => {
+          this.initCategoryNum();
+        })
+      }
+    },
+    shopCart() {
+      this.initCategoryNum();
     }
   }
 }
@@ -190,42 +295,48 @@ export default {
                     <span class="menu_detail_header_right" @click="showTitleDetail(index)"></span>
                     <p class="description_tip" v-if="index == TitleDetailIndex">
                       <span>{{ item.name }}</span>
-                      {{item.description}}
+                      {{ item.description }}
                     </p>
                   </header>
                   <section v-for="(foods,foodIndex) in item.foods" :key="foodIndex" class="menu_detail_list">
-                      <router-link :to="{path: '', query:{}}" tag="div" class="menu_detail_link">
-                        <section class="menu_food_img">
-                          <img :src="imgBaseUrl + foods.image_path" alt="">
-                        </section>
-                        <section class="menu_food_description">
-                          <h3 class="food_description_head">
-                            <strong class="description_foodname">{{foods.name}}</strong>
-                            <ul class="attributes_ul" v-if="foods.attributes.length">
-                              <li v-if="attribute" v-for="(attribute, foodindex) in foods.attributes" :key="foodindex" :style="{color: '#' + attribute.icon_color,borderColor:'#' + attribute.icon_color}" :class="{attribute_new: attribute.icon_name == '新'}">
-                                <p :style="{color: attribute.icon_name == '新'? '#fff' : '#' + attribute.icon_color}">{{attribute.icon_name == '新'? '新品':attribute.icon_name}}</p>
-                              </li>
-                            </ul>
-                          </h3>
-                          <p class="food_description_content">{{foods.description}}</p>
-                          <p class="food_description_sale_rating">
-                            <span>月售{{foods.month_sales}}份</span>
-                            <span>好评率{{foods.satisfy_rate}}%</span>
-                          </p>
-                          <p v-if="foods.activity" class="food_activity">
-                            <span :style="{color: '#' + foods.activity.image_text_color,borderColor:'#' +foods.activity.icon_color}">{{foods.activity.image_text}}</span>
-                          </p>
-                        </section>
-                      </router-link>
-                      <footer class="menu_detail_footer">
-                        <section class="food_price">
-                          <span>¥</span>
-                          <span>{{foods.specfoods[0].price}}</span>
-                          <span v-if="foods.specifications.length">起</span>
-<!--                          todo: 购物车-->
-<!--                          <buy-cart>-->
-                        </section>
-                      </footer>
+                    <router-link :to="{path: '', query:{}}" tag="div" class="menu_detail_link">
+                      <section class="menu_food_img">
+                        <img :src="imgBaseUrl + foods.image_path" alt="">
+                      </section>
+                      <section class="menu_food_description">
+                        <h3 class="food_description_head">
+                          <strong class="description_foodname">{{ foods.name }}</strong>
+                          <ul class="attributes_ul" v-if="foods.attributes.length">
+                            <li v-if="attribute" v-for="(attribute, foodindex) in foods.attributes" :key="foodindex"
+                                :style="{color: '#' + attribute.icon_color,borderColor:'#' + attribute.icon_color}"
+                                :class="{attribute_new: attribute.icon_name == '新'}">
+                              <p :style="{color: attribute.icon_name == '新'? '#fff' : '#' + attribute.icon_color}">
+                                {{ attribute.icon_name == '新' ? '新品' : attribute.icon_name }}</p>
+                            </li>
+                          </ul>
+                        </h3>
+                        <p class="food_description_content">{{ foods.description }}</p>
+                        <p class="food_description_sale_rating">
+                          <span>月售{{ foods.month_sales }}份</span>
+                          <span>好评率{{ foods.satisfy_rate }}%</span>
+                        </p>
+                        <p v-if="foods.activity" class="food_activity">
+                          <span
+                              :style="{color: '#' + foods.activity.image_text_color,borderColor:'#' +foods.activity.icon_color}">{{
+                              foods.activity.image_text
+                            }}</span>
+                        </p>
+                      </section>
+                    </router-link>
+                    <footer class="menu_detail_footer">
+                      <section class="food_price">
+                        <span>¥</span>
+                        <span>{{ foods.specfoods[0].price }}</span>
+                        <span v-if="foods.specifications.length">起</span>
+                      </section>
+                      <buy-cart :shop-id="shopId" :foods="foods" @showChooseList="showChooseList"
+                                @showMoveDot="showMoveDotFun"></buy-cart>
+                    </footer>
                   </section>
                 </li>
               </ul>
@@ -233,24 +344,77 @@ export default {
           </section>
           <section class="buy_cart_container">
             <section class="cart_icon_num" @click.stop="toggleCartList">
-              <div class="cart_icon_container" ref="cartContainer" :class="{cart_icon_activity: totalPrice > 0, move_in_cart: receiveInCart}">
-                <span class="cart_list_length" v-if="totalNum">{{totalNum}}</span>
+              <div class="cart_icon_container" ref="cartContainer"
+                   :class="{cart_icon_activity: totalPrice > 0, move_in_cart: receiveInCart}">
+                <span class="cart_list_length" v-if="totalNum">{{ totalNum }}</span>
                 <svg class="cart_icon">
                   <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#cart-icon"></use>
                 </svg>
               </div>
               <div class="cart_num">
-                <div>¥{{totalPrice}}</div>
-                <div>配送费¥{{deliveryFee}}</div>
+                <div>¥{{ totalPrice }}</div>
+                <div>配送费¥{{ deliveryFee }}</div>
               </div>
             </section>
             <section class="gotopay" :class="{gotopay_acitvity: minimumOrderAmount <= 0}">
-              <span class="gotopay_button_style" v-if="minimumOrderAmount > 0">还差¥{{minimumOrderAmount}}元起送</span>
+              <span class="gotopay_button_style"
+                    v-if="minimumOrderAmount > 0">还差¥{{ minimumOrderAmount }}元起送</span>
               <router-link :to="{path:'',query:{}}" class="gotopay_button_style" v-else>去结算</router-link>
             </section>
           </section>
         </section>
       </transition>
+    </section>
+    <section>
+      <transition name="fade">
+        <div class="specs_cover" @click="showChooseList" v-if="showSpace"></div>
+      </transition>
+      <transition name="fadeBounce">
+        <div class="specs_list" v-if="showSpace">
+          <header class="specs_list_header">
+            <h4 class="ellipsis">{{ choosedFoods.name }}</h4>
+            <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" version="1.1" class="specs_cancel"
+                 @click="showChooseList">
+              <line x1="0" y1="0" x2="16" y2="16" stroke="#666" stroke-width="1.2"/>
+              <line x1="0" y1="16" x2="16" y2="0" stroke="#666" stroke-width="1.2"/>
+            </svg>
+          </header>
+          <section class="specs_details">
+            <h5 class="specs_details_title">{{ choosedFoods.specifications[0].name }}</h5>
+            <ul>
+              <li v-for="(item,itemIndex) in choosedFoods.specifications[0].values"
+                  :class="{specs_activity: itemIndex == spaceIndex}" @click="chooseSpecs(itemIndex)">{{ item }}
+              </li>
+            </ul>
+          </section>
+          <footer class="specs_footer">
+            <div class="specs_price">
+              <span>¥ </span>
+              <span>{{ choosedFoods.specfoods[spaceIndex].price }}</span>
+            </div>
+            <div class="specs_addto_cart"
+                 @click="addSpace(choosedFoods.category_id, choosedFoods.item_id, choosedFoods.specfoods[spaceIndex].food_id, choosedFoods.specfoods[spaceIndex].name, choosedFoods.specfoods[spaceIndex].price, choosedFoods.specifications[0].values[spaceIndex], choosedFoods.specfoods[spaceIndex].packing_fee, choosedFoods.specfoods[spaceIndex].sku_id, choosedFoods.specfoods[spaceIndex].stock)">
+              加入购物车
+            </div>
+          </footer>
+        </div>
+      </transition>
+    </section>
+    <transition
+        appear
+        @after-appear='afterEnter'
+        @before-appear="beforeEnter"
+        v-for="item in showMoveDot"
+    >
+      <span class="move_dot" v-if="item">
+         <svg class="move_liner">
+           <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#cart-add"></use>
+         </svg>
+      </span>
+    </transition>
+    <loading v-show="showLoading"></loading>
+    <section class="animation_opactiy shop_back_svg_container" v-if="showLoading">
+      <img src="@/assets/shop_back_svg.svg" alt="">
     </section>
   </div>
 </template>
