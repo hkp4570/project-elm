@@ -70,8 +70,36 @@ export default {
             };
         }
         state.cartList = {...cart};
-        console.log(cart,'cart');
         //存入localStorage
+        setStore('buyCart', state.cartList);
+    },
+    // 移出购物车
+    reduce_cart(state, {
+        shopid,
+        category_id,
+        item_id,
+        food_id,
+    }) {
+        let cart = state.cartList;
+        let shop = (cart[shopid] || {});
+        let category = (shop[category_id] || {});
+        let item = (category[item_id] || {});
+        if (item && item[food_id]) {
+            if (item[food_id]['num'] > 0) {
+                item[food_id]['num']--;
+                state.cartList = {...cart};
+                //存入localStorage
+                setStore('buyCart', state.cartList);
+            } else {
+                //商品数量为0，则清空当前商品的信息
+                item[food_id] = null;
+            }
+        }
+    },
+    // 清空购物车信息
+    clear_cart(state, shopid){
+        state.cartList[shopid] = null;
+        state.cartList = {...state.cartList};
         setStore('buyCart', state.cartList);
     }
 }

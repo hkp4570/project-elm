@@ -22,13 +22,17 @@ export default {
       categoryNum: [], // 已加入购物车数量
       menuIndex: 0, // 选中的菜单索引值
       totalPrice: 0, // 总价格
-      receiveInCart: false, //
+      receiveInCart: false, // 购物车组件下落的圆点是否到达目标位置
       showSpace: false, // 食品规格显隐
       spaceIndex: 0, //当前选中的规格索引值
       choosedFoods: null, //当前选中食品数据
       showMoveDot: [],
-      elLeft: 0,
-      elBottom: 0,
+      elLeft: 0, // 当前点击加按钮在网页中的绝对left值
+      elBottom: 0, // 当前点击加按钮在网页中的绝对top值
+      windowHeight: null, // 屏幕的高度
+      showDeleteTip: false, //多规格商品点击减按钮，弹出提示框
+      showCartList: false, // 显示购物车列表
+      cartFoodList: [], // 购物车商品列表
     }
   },
   mixins: [getImgPath],
@@ -44,7 +48,11 @@ export default {
     },
     // 购物车中商品总数量
     totalNum() {
-
+      let num = 0;
+      this.cartFoodList.forEach(item => {
+        num += item.num;
+      })
+      return num;
     },
     // 还差多少元起送
     minimumOrderAmount() {
@@ -65,9 +73,10 @@ export default {
   },
   mounted() {
     this.initData();
+    this.windowHeight = window.innerHeight;
   },
   methods: {
-    ...mapMutations(['setState', 'add_cart']),
+    ...mapMutations(['setState', 'add_cart','clear_cart', 'reduce_cart']),
     async initData() {
       if (!this.latitude) {
         const res = await msiteAddress(this.geohash);
@@ -102,8 +111,11 @@ export default {
     chooseMenu(index) {
       this.menuIndex = index;
     },
+    // 打开购物车列表
     toggleCartList() {
-
+      this.cartFoodList.length ? this.showCartList = !this.showCartList : true;
+      console.log(this.showCartList, 'this.showCartList');
+      console.log(this.cartFoodList, 'this.cartFoodList');
     },
     // 显示规格列表
     showChooseList(foods) {
@@ -174,10 +186,55 @@ export default {
       this.elLeft = elLeft;
       this.elBottom = elBottom;
     },
-    beforeEnter() {
+    beforeEnter(el) {
+      el.style.transform = `translate3d(0, ${37 + this.elBottom - this.windowHeight}px,0)`;
+      el.children[0].style.transform = `translate3d(${this.elLeft - 30}px,0,0)`;
+      el.children[0].style.opacity = 0;
     },
-    afterEnter() {
+    afterEnter(el) {
+      el.style.transform = `translate3d(0,0,0)`;
+      el.children[0].style.transform = `translate3d(0,0,0)`;
+      el.style.transition = 'transform .55s cubic-bezier(0.3, -0.25, 0.7, -0.15)';
+      el.children[0].style.transition = 'transform .55s linear';
+      this.showMoveDot = this.showMoveDot.map(item => false);
+      el.children[0].style.opacity = 1;
+      el.children[0].addEventListener('transitionend', () => {
+        this.listenInCart();
+      })
+      el.children[0].addEventListener('webkitAnimationEnd', () => {
+        this.listenInCart();
+      })
     },
+    // 原点是否进入购物车
+    listenInCart() {
+      if (!this.receiveInCart) {
+        this.receiveInCart = true;
+        this.$refs.cartContainer.addEventListener('animationend', () => {
+          this.receiveInCart = false;
+        })
+        this.$refs.cartContainer.addEventListener('webkitAnimationEnd', () => {
+          this.receiveInCart = false;
+        })
+      }
+    },
+    // 减少商品
+    showReduceTip() {
+      this.showDeleteTip = true;
+      clearTimeout(this.timer);
+      this.timer = setTimeout(() => {
+        clearTimeout(this.timer);
+        this.showDeleteTip = false;
+      }, 3000);
+    },
+    // 清空购物车
+    clearCart() {
+      this.toggleCartList();
+      this.clear_cart(this.shopId);
+    },
+    // 移出购物车
+    removeOutCart(category_id, item_id, food_id, name, price, specs){
+      this.reduce_cart({shopid: this.shopId, category_id, item_id, food_id, name, price, specs});
+    }
   },
   watch: {
     showLoading(value) {
@@ -189,6 +246,11 @@ export default {
     },
     shopCart() {
       this.initCategoryNum();
+    },
+    cartFoodList(value) {
+      if(!value.length){
+        this.showCardList = false;
+      }
     }
   }
 }
@@ -335,7 +397,7 @@ export default {
                         <span v-if="foods.specifications.length">起</span>
                       </section>
                       <buy-cart :shop-id="shopId" :foods="foods" @showChooseList="showChooseList"
-                                @showMoveDot="showMoveDotFun"></buy-cart>
+                                @showMoveDot="showMoveDotFun" @showReduceTip="showReduceTip"></buy-cart>
                     </footer>
                   </section>
                 </li>
@@ -362,6 +424,44 @@ export default {
               <router-link :to="{path:'',query:{}}" class="gotopay_button_style" v-else>去结算</router-link>
             </section>
           </section>
+          <transition name="toggle-cart">
+            <section class="cart_food_list" v-show="showCartList && cartFoodList.length">
+              <header>
+                <h4>购物车</h4>
+                <div @click.stop="clearCart">
+                  <svg>
+                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#cart-remove"></use>
+                  </svg>
+                  <span class="clear_cart">清空</span>
+                </div>
+              </header>
+              <section class="cart_food_details" id="cartFood">
+                <ul>
+                  <li v-for="(item,index) in cartFoodList" :key="index" class="cart_food_li">
+                    <div class="cart_list_num">
+                      <p class="ellipsis">{{ item.name }}</p>
+                      <p class="ellipsis">{{ item.specs }}</p>
+                    </div>
+                    <div class="cart_list_price">
+                      <span>¥</span>
+                      <span>{{ item.price }}</span>
+                    </div>
+                    <section class="cart_list_control">
+                        <span @click="removeOutCart(item.category_id, item.item_id, item.food_id, item.name, item.price, item.specs)">
+                              <svg>
+                                <use xmlns:xlink="http://www.w3.org/1999/xlink"  xlink:href="#cart-minus"></use>
+                              </svg>
+                        </span>
+                      <span class="cart_num">{{item.num}}</span>
+                      <svg class="cart_add" @click="addToCart(item.category_id, item.item_id, item.food_id, item.name, item.price, item.specs)">
+                        <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#cart-add"></use>
+                      </svg>
+                    </section>
+                  </li>
+                </ul>
+              </section>
+            </section>
+          </transition>
         </section>
       </transition>
     </section>

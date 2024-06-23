@@ -33,7 +33,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['add_cart']),
+    ...mapMutations(['add_cart','reduce_cart']),
     // 显示规格列表
     showChooseList(foods) {
       this.$emit('showChooseList', foods);
@@ -55,6 +55,14 @@ export default {
       const elBottom = event.target.getBoundingClientRect().bottom;
       this.showMoveDot.push(true);
       this.$emit('showMoveDot', this.showMoveDot, elLeft, elBottom);
+    },
+    removeOutCart(category_id, item_id, food_id, name, price, specs, packing_fee, sku_id, stock){
+      if (this.foodNum > 0) {
+        this.reduce_cart({shopid: this.shopId, category_id, item_id, food_id, name, price, specs, packing_fee, sku_id, stock});
+      }
+    },
+    showReduceTip(){
+      this.$emit('showReduceTip');
     }
   }
 }
@@ -65,7 +73,7 @@ export default {
     <!--    直接加入购物车-->
     <section class="cart_button" v-if="!foods.specifications.length">
       <transition name="showReduce">
-        <span v-if="foodNum">
+        <span v-if="foodNum" @click="removeOutCart(foods.category_id, foods.item_id, foods.specfoods[0].food_id, foods.specfoods[0].name, foods.specfoods[0].price, '', foods.specfoods[0].packing_fee, foods.specfoods[0].sku_id, foods.specfoods[0].stock)">
            <svg>
              <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#cart-minus"></use>
            </svg>
@@ -84,7 +92,7 @@ export default {
     <section v-else class="choose_specification">
       <section class="choose_icon_container">
         <transition name="showReduce">
-          <svg class="specs_reduce_icon" v-if="foodNum">
+          <svg class="specs_reduce_icon" v-if="foodNum" @click.stop="showReduceTip">
             <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#cart-minus"></use>
           </svg>
         </transition>
