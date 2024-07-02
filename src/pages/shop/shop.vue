@@ -1,11 +1,12 @@
 <script>
 import {mapState, mapMutations} from 'vuex';
 import {imgBaseUrl} from '@/utils/index.js';
-import {msiteAddress, shopDetails, foodMenu} from '@/service/getData';
+import {msiteAddress, shopDetails, foodMenu, getRatingList, ratingScores, ratingTags} from '@/service/getData';
 import RatingStar from "@/components/common/ratingStar.vue";
 import BuyCart from "@/components/common/buyCart.vue";
 import Loading from '@/components/common/loading.vue';
-import {getImgPath} from "@/mixin/minix";
+import {getImgPath, loadMore} from "@/mixin/minix";
+import BScroll from 'better-scroll'
 
 export default {
   data() {
@@ -33,9 +34,18 @@ export default {
       showDeleteTip: false, //多规格商品点击减按钮，弹出提示框
       showCartList: false, // 显示购物车列表
       cartFoodList: [], // 购物车商品列表
+      preventRepeatRequest: false, // 是否正在请求数据中
+      loadRatings: false, //加载更多评论是显示加载组件
+      ratingOffset: 0, //评价获取数据offset值
+      ratingList: null, // 评论列表
+      ratingScoresData: null, // 商铺总体评论
+      ratingTagsList: null, // 评论分类列表
+      ratingTageIndex: 0, // 评价分类索引
+      ratingTagName: '', // 评论的类型
+      ratingScroll: null, // 评论页的scroll
     }
   },
-  mixins: [getImgPath],
+  mixins: [getImgPath, loadMore],
   components: {
     RatingStar,
     BuyCart,
@@ -76,7 +86,7 @@ export default {
     this.windowHeight = window.innerHeight;
   },
   methods: {
-    ...mapMutations(['setState', 'add_cart','clear_cart', 'reduce_cart']),
+    ...mapMutations(['setState', 'add_cart', 'clear_cart', 'reduce_cart']),
     async initData() {
       if (!this.latitude) {
         const res = await msiteAddress(this.geohash);
@@ -95,6 +105,12 @@ export default {
           foods: menu.foods.slice(0, 10),
         }
       })
+      // 评论列表
+      this.ratingList = await getRatingList(this.shopId, this.ratingOffset);
+      // 商铺总体评价
+      this.ratingScoresData = await ratingScores(this.shopId);
+      // 获取评论分类列表
+      this.ratingTagsList = await ratingTags(this.shopId);
       this.showLoading = false;
     },
     showActivitiesFun() {
@@ -143,6 +159,7 @@ export default {
         sku_id,
         stock
       });
+      this.showChooseList();
     },
     initCategoryNum() {
       let newArr = [];
@@ -232,8 +249,24 @@ export default {
       this.clear_cart(this.shopId);
     },
     // 移出购物车
-    removeOutCart(category_id, item_id, food_id, name, price, specs){
+    removeOutCart(category_id, item_id, food_id, name, price, specs) {
       this.reduce_cart({shopid: this.shopId, category_id, item_id, food_id, name, price, specs});
+    },
+    // 加载更多评论
+    async loaderMoreRating() {
+      console.log('获取更多评论');
+      if (this.preventRepeatRequest) return;
+    },
+    // 获取不同类型的评论列表
+    async changeTagIndex(index, name) {
+      this.ratingTageIndex = index;
+      this.ratingOffset = 0;
+      this.ratingTagName = name;
+      let res = await getRatingList(this.shopId, this.ratingOffset, name);
+      this.ratingList = [...res];
+      this.$nextTick(() => {
+        this.ratingScroll.refresh();
+      })
     }
   },
   watch: {
@@ -248,8 +281,28 @@ export default {
       this.initCategoryNum();
     },
     cartFoodList(value) {
-      if(!value.length){
+      if (!value.length) {
         this.showCardList = false;
+      }
+    },
+    // 商品、评论切换状态
+    changeShowType: function (value) {
+      if (value === 'rating') {
+        this.$nextTick(() => {
+          this.ratingScroll = new BScroll('#ratingContainer', {
+            probeType: 3,
+            deceleration: 0.003,
+            bounce: false,
+            swipeTime: 2000,
+            click: true,
+          });
+          this.ratingScroll.on('scroll', (pos) => {
+            if (Math.abs(Math.round(pos.y)) >= Math.abs(Math.round(this.ratingScroll.maxScrollY))) {
+              this.loaderMoreRating();
+              this.ratingScroll.refresh();
+            }
+          })
+        })
       }
     }
   }
@@ -406,8 +459,8 @@ export default {
           </section>
           <section class="buy_cart_container">
             <section class="cart_icon_num" @click.stop="toggleCartList">
-              <div class="cart_icon_container" ref="cartContainer"
-                   :class="{cart_icon_activity: totalPrice > 0, move_in_cart: receiveInCart}">
+              <div class="cart_icon_container" :class="{cart_icon_activity: totalPrice > 0, move_in_cart:receiveInCart}"
+                   ref="cartContainer">
                 <span class="cart_list_length" v-if="totalNum">{{ totalNum }}</span>
                 <svg class="cart_icon">
                   <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#cart-icon"></use>
@@ -447,13 +500,15 @@ export default {
                       <span>{{ item.price }}</span>
                     </div>
                     <section class="cart_list_control">
-                        <span @click="removeOutCart(item.category_id, item.item_id, item.food_id, item.name, item.price, item.specs)">
+                        <span
+                            @click="removeOutCart(item.category_id, item.item_id, item.food_id, item.name, item.price, item.specs)">
                               <svg>
-                                <use xmlns:xlink="http://www.w3.org/1999/xlink"  xlink:href="#cart-minus"></use>
+                                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#cart-minus"></use>
                               </svg>
                         </span>
-                      <span class="cart_num">{{item.num}}</span>
-                      <svg class="cart_add" @click="addToCart(item.category_id, item.item_id, item.food_id, item.name, item.price, item.specs)">
+                      <span class="cart_num">{{ item.num }}</span>
+                      <svg class="cart_add"
+                           @click="addToCart(item.category_id, item.item_id, item.food_id, item.name, item.price, item.specs)">
                         <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#cart-add"></use>
                       </svg>
                     </section>
@@ -462,6 +517,75 @@ export default {
               </section>
             </section>
           </transition>
+          <transition name="fade">
+            <div class="screen_cover" v-show="showCartList&&cartFoodList.length" @click="toggleCartList"></div>
+          </transition>
+        </section>
+      </transition>
+      <transition name="fade-choose">
+        <section class="rating_container" id="ratingContainer" v-show="changeShowType === 'rating'">
+          <section v-load-more="loaderMoreRating" type="2">
+            <section>
+              <header class="rating_header">
+                <section class="rating_header_left">
+                  <p>{{ shopDetailData.rating }}</p>
+                  <p>综合评价</p>
+                  <p>高于周边商家{{ (ratingScoresData.compare_rating * 100).toFixed(1) }}%</p>
+                </section>
+                <section class="rating_header_right">
+                  <p>
+                    <span>服务态度</span>
+                    <rating-star :rating='ratingScoresData.service_score'></rating-star>
+                    <span class="rating_num">{{ ratingScoresData.service_score.toFixed(1) }}</span>
+                  </p>
+                  <p>
+                    <span>菜品评价</span>
+                    <rating-star :rating='ratingScoresData.food_score'></rating-star>
+                    <span class="rating_num">{{ ratingScoresData.food_score.toFixed(1) }}</span>
+                  </p>
+                  <p>
+                    <span>送达时间</span>
+                    <span class="delivery_time">{{ shopDetailData.order_lead_time }}分钟</span>
+                  </p>
+                </section>
+              </header>
+              <ul class="tag_list_ul">
+                <li v-for="(item,index) in ratingTagsList" :key="index"
+                    @click="changeTagIndex(index,item.name)"
+                    :class="{unsatisfied: item.unsatisfied, tagActivity:  ratingTageIndex === index}">
+                  {{ item.name }}
+                  ({{ item.count }})
+                </li>
+              </ul>
+              <ul class="rating_list_ul">
+                <li v-for="(item,index) in ratingList" :key="index" class="rating_list_li">
+                  <img :src="getImgPath(item.avatar)" class="user_avatar" alt="">
+                  <section class="rating_list_details">
+                    <header>
+                      <section class="username_star">
+                        <p class="username">{{ item.username }}</p>
+                        <p class="star_desc">
+                          <rating-star :rating='item.rating_star'></rating-star>
+                          <span class="time_spent_desc">{{ item.time_spent_desc }}</span>
+                        </p>
+                      </section>
+                      <time class="rated_at">{{ item.rated_at }}</time>
+                    </header>
+                    <ul class="food_img_ul">
+                      <li v-for="(item,index) in item_ratings" :key="index">
+                        <img :src="getImgPath(item.image_hash)" v-if="item.image_hash" alt="">
+                      </li>
+                    </ul>
+                    <ul class="food_name_ul">
+                      <li v-for="(item, index) in item.item_ratings" :key="index" class="ellipsis">
+                        {{ item.food_name }}
+                      </li>
+                    </ul>
+                  </section>
+                </li>
+              </ul>
+            </section>
+          </section>
         </section>
       </transition>
     </section>

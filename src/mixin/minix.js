@@ -1,3 +1,13 @@
+export const loadMore = {
+    'directives': {
+        'load-more': {
+            bind(el, binding) {
+                console.log(binding, 'binding');
+            }
+        }
+    }
+}
+
 export const getImgPath = {
     methods: {
         getImgPath(path) {
