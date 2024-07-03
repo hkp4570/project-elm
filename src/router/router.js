@@ -24,6 +24,7 @@ const Search = () => import(/* webpackChunkName: "Search" */ '../pages/search/se
 const Food = () => import(/* webpackChunkName: "Food" */ '../pages/food/food.vue')
 const Shop = () => import(/* webpackChunkName: "Shop" */ '../pages/shop/shop.vue')
 const ShopDetail = () => import(/* webpackChunkName: "ShopDetail" */ '../pages/shop/children/shopDetail.vue')
+const Order = () => import(/* webpackChunkName: "Order" */ '../pages/order/order.vue')
 
 export default [
     {
@@ -161,6 +162,16 @@ export default [
                 path: 'shopDetail',
                 component: ShopDetail,
             }
+        ]
+    },
+    {
+        path: '/order',
+        component: BaseLayout,
+        children: [
+            {
+                path: '',
+                component: Order,
+            },
         ]
     }
 ]

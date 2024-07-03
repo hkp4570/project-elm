@@ -1465,3 +1465,14 @@ export const ratingScores = shopid => fetch('/ugc/v2/restaurants/' + shopid + '/
  * @returns {Promise<unknown>|*}
  */
 export const ratingTags = shopid => fetch('/ugc/v2/restaurants/' + shopid + '/ratings/tags');
+
+/**
+ * 获取订单列表
+ * @param user_id
+ * @param offset
+ * @returns {Promise<unknown>|*}
+ */
+export const getOrderList = (user_id, offset) => fetch('/bos/v2/users/' + user_id + '/orders', {
+    limit: 10,
+    offset,
+});
