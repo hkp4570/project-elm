@@ -13,6 +13,9 @@ export default {
             state.login = false;
         }
     },
+    record_shopDetail(state, detail) {
+        state.shopDetail = detail;
+    },
     record_userinfo(state, info) {
         state.userInfo = info;
         state.login = true;
@@ -97,7 +100,7 @@ export default {
         }
     },
     // 清空购物车信息
-    clear_cart(state, shopid){
+    clear_cart(state, shopid) {
         state.cartList[shopid] = null;
         state.cartList = {...state.cartList};
         setStore('buyCart', state.cartList);

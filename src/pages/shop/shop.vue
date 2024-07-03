@@ -86,7 +86,7 @@ export default {
     this.windowHeight = window.innerHeight;
   },
   methods: {
-    ...mapMutations(['setState', 'add_cart', 'clear_cart', 'reduce_cart']),
+    ...mapMutations(['setState', 'add_cart', 'clear_cart', 'reduce_cart', 'record_shopDetail']),
     async initData() {
       if (!this.latitude) {
         const res = await msiteAddress(this.geohash);
@@ -111,6 +111,8 @@ export default {
       this.ratingScoresData = await ratingScores(this.shopId);
       // 获取评论分类列表
       this.ratingTagsList = await ratingTags(this.shopId);
+      // 记录商铺详情
+      this.record_shopDetail(this.shopDetailData);
       this.showLoading = false;
     },
     showActivitiesFun() {
@@ -275,6 +277,9 @@ export default {
       this.$nextTick(() => {
         this.ratingScroll.refresh();
       })
+    },
+    goBack() {
+      this.$router.go(-1);
     }
   },
   watch: {
@@ -320,7 +325,7 @@ export default {
 <template>
   <div>
     <section v-if="!showLoading" class="shop_container">
-      <nav class="goback">
+      <nav class="goback" @click="goBack">
         <svg width="4rem" height="100%" xmlns="http://www.w3.org/2000/svg" version="1.1">
           <polyline points="12,18 4,9 12,0" style="fill:none;stroke:rgb(255,255,255);stroke-width:3"/>
         </svg>
