@@ -254,8 +254,16 @@ export default {
     },
     // 加载更多评论
     async loaderMoreRating() {
-      console.log('获取更多评论');
       if (this.preventRepeatRequest) return;
+      this.loadRatings = true;
+      this.preventRepeatRequest = true;
+      this.ratingOffset += 10;
+      let ratingDate = await getRatingList(this.shopId, this.ratingOffset, this.ratingTagName);
+      this.ratingList = [...this.ratingList, ...ratingDate];
+      this.loadRatings = false;
+      if (ratingDate.length >= 10) {
+        this.preventRepeatRequest = false;
+      }
     },
     // 获取不同类型的评论列表
     async changeTagIndex(index, name) {

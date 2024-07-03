@@ -150,3 +150,13 @@ export const animate = (element, target, duration = 400, mode = 'ease-out', call
 }
 
 export const imgBaseUrl = 'https://elm.cangdu.org/img/';
+
+export const getStyle = (element, attr, NumberMode = 'int') => {
+    let target;
+    if (attr === 'scrollTop') {
+        target = element.scrollTop;
+    } else {
+        target = document.defaultView.getComputedStyle(element, null)[attr];
+    }
+    return NumberMode === 'float' ? parseFloat(target) : parseInt(target);
+}
