@@ -92,7 +92,8 @@ export default {
       <section class="input_container captcha_code_container">
         <input type="text" placeholder="验证码" name="mobileCode" v-model="mobileCode">
         <div class="img_change_img">
-          <img v-show="captchaCodeImg" :src="captchaCodeImg" alt=""/>
+          <!--          <img v-show="captchaCodeImg" :src="captchaCodeImg" alt=""/>-->
+          <div v-html="captchaCodeImg"></div>
           <div class="change_img" @click="getCaptchaCode">
             <p>看不清</p>
             <p>换一张</p>
