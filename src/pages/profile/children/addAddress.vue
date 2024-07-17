@@ -66,6 +66,7 @@ export default {
       }
     },
     submitThing() {
+      if (!this.name || !this.addAddress || !this.foodAddress || !this.telenum) return;
       postAddAddress(this.userInfo.user_id, this.foodAddress, this.addAddress, this.geohash, this.name, this.telenum, this.sparePhone, 0, 1, '公司', 4).then(res => {
         if (res.message) {
           this.alterText = res.message;
@@ -123,7 +124,7 @@ export default {
           </div>
         </section>
         <section class="addbutton">
-          <button @click.prevent="submitThing">新增地址</button>
+          <button @click="submitThing">新增地址</button>
         </section>
       </form>
     </section>
