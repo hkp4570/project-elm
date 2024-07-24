@@ -28,8 +28,6 @@ npm run lint
 
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
-
-
 ### 购买页面 shop
 
 1. 从店铺列表跳转到购买页面，携带了shopid参数。
@@ -37,3 +35,6 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 2. 获取当前商铺的详细信息，获取该商铺的所有的商品信息。
 
 3. 加入购物车后，监听到数据变化，重新去计算值。
+
+test-elm
+123456

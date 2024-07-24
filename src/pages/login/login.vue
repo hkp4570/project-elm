@@ -117,7 +117,7 @@ export default {
       注册过的用户可凭账号密码登录
     </p>
     <div class="login_container" @click="mobileLogin">登录</div>
-    <router-link to="" class="to_forget">重置密码</router-link>
+    <router-link to="/profile/forget" class="to_forget">重置密码</router-link>
     <AlterTip v-if="showAlert" :alter-text="alterText" @closeTip="closeTip"></AlterTip>
   </div>
 </template>
