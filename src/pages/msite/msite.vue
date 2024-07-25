@@ -94,8 +94,8 @@ export default {
         <div class="swiper-wrapper">
           <div class="swiper-slide food_types_container" v-for="(item,index) in foodTypes" :key="index">
             <RouterLink
-                :to="{path: '/food', query: {geohash, title: foodItem.title, restaurant_category_id: getCategoryId(foodItem.link)}}"
-                class="link_to_food" v-for="foodItem in item" :key="foodItem.id">
+              :to="{path: '/food', query: {geohash, title: foodItem.title, restaurant_category_id: getCategoryId(foodItem.link)}}"
+              class="link_to_food" v-for="foodItem in item" :key="foodItem.id">
               <figure>
                 <img :src="imgBaseUrl + foodItem.image_url" alt="">
                 <figcaption>{{ foodItem.title }}</figcaption>

@@ -52,7 +52,7 @@ export default {
           })
         }
       }
-      this.category = await foodCategory(this.latitude, this.longitude);
+      this.category = await foodCategory();
       this.category.forEach(c => {
         if (c.id == restaurant_category_id) {
           this.categoryDetail = c.sub_categories;
@@ -306,7 +306,7 @@ export default {
             <footer class="confirm_filter">
               <div class="clear_all filter_button_style" @click.stop="clearSelect">清空</div>
               <div class="confirm_select filter_button_style" @click.stop="confirmSelectFun">确定<span
-                  v-show="filterNum">({{ filterNum }})</span></div>
+                v-show="filterNum">({{ filterNum }})</span></div>
             </footer>
           </section>
         </transition>

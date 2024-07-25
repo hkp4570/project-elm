@@ -9,7 +9,10 @@ module.exports = defineConfig({
       },
       "/v2": {
         target: "http://localhost:9527"
-      }
+      },
+      "/shopping": {
+        target: "http://localhost:9527"
+      },
     }
   }, configureWebpack: {
     resolve: {
