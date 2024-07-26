@@ -1,6 +1,6 @@
 <script>
 import {mapState, mapMutations} from 'vuex';
-import {imgBaseUrl} from '@/utils/index.js';
+import {imgBaseUrl, setStore} from '@/utils/index.js';
 import {msiteAddress, shopDetails, foodMenu, getRatingList, ratingScores, ratingTags} from '@/service/getData';
 import RatingStar from "@/components/common/ratingStar.vue";
 import BuyCart from "@/components/common/buyCart.vue";
@@ -280,6 +280,10 @@ export default {
     },
     goBack() {
       this.$router.go(-1);
+    },
+    jumpFoodDetail(foods) {
+      setStore('foodDetail', foods);
+      this.$router.push('/shop/foodDetail');
     }
   },
   watch: {
@@ -427,7 +431,7 @@ export default {
                     </p>
                   </header>
                   <section v-for="(foods,foodIndex) in item.foods" :key="foodIndex" class="menu_detail_list">
-                    <router-link :to="{path: '', query:{}}" tag="div" class="menu_detail_link">
+                    <div @click="jumpFoodDetail(foods)" class="menu_detail_link">
                       <section class="menu_food_img">
                         <img :src="imgBaseUrl + foods.image_path" alt="">
                       </section>
@@ -450,12 +454,12 @@ export default {
                         </p>
                         <p v-if="foods.activity" class="food_activity">
                           <span
-                              :style="{color: '#' + foods.activity.image_text_color,borderColor:'#' +foods.activity.icon_color}">{{
+                            :style="{color: '#' + foods.activity.image_text_color,borderColor:'#' +foods.activity.icon_color}">{{
                               foods.activity.image_text
                             }}</span>
                         </p>
                       </section>
-                    </router-link>
+                    </div>
                     <footer class="menu_detail_footer">
                       <section class="food_price">
                         <span>¥</span>
@@ -514,7 +518,7 @@ export default {
                     </div>
                     <section class="cart_list_control">
                         <span
-                            @click="removeOutCart(item.category_id, item.item_id, item.food_id, item.name, item.price, item.specs)">
+                          @click="removeOutCart(item.category_id, item.item_id, item.food_id, item.name, item.price, item.specs)">
                               <svg>
                                 <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#cart-minus"></use>
                               </svg>
@@ -638,10 +642,10 @@ export default {
       </transition>
     </section>
     <transition
-        appear
-        @after-appear='afterEnter'
-        @before-appear="beforeEnter"
-        v-for="item in showMoveDot"
+      appear
+      @after-appear='afterEnter'
+      @before-appear="beforeEnter"
+      v-for="item in showMoveDot"
     >
       <span class="move_dot" v-if="item">
          <svg class="move_liner">

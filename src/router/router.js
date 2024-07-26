@@ -25,153 +25,158 @@ const Food = () => import(/* webpackChunkName: "Food" */ '../pages/food/food.vue
 const Shop = () => import(/* webpackChunkName: "Shop" */ '../pages/shop/shop.vue')
 const ShopDetail = () => import(/* webpackChunkName: "ShopDetail" */ '../pages/shop/children/shopDetail.vue')
 const Order = () => import(/* webpackChunkName: "Order" */ '../pages/order/order.vue')
+const FoodDetail = () => import(/* webpackChunkName: "FoodDetail" */ '../pages/shop/children/foodDetail.vue')
 
 export default [
-    {
-        path: '/',
-        redirect: '/home',
-    },
-    {
-        path: '/home',
-        component: Home,
-    },
-    {
-        path: '/city/:cityid',
-        component: City
-    },
-    {
-        path: '/login',
-        component: Login
-    },
-    {
-        path: '/msite',
-        component: Msite,
-        meta: {
-            keepAlive: true
-        }
-    },
-    {
-        path: '/profile',
-        component: BaseLayout,
-        children: [
-            {
-                path: '',
-                component: Profile,
-            },
-            {
-                path: 'info',
-                component: Info,
-            },
-            {
-                path: 'setusername',
-                component: SetUsername,
-            },
-            {
-                path: 'forget',
-                component: Forget,
-            },
-            {
-                path: 'address',
-                component: Address,
-            },
-            {
-                path: 'addaddress',
-                component: AddAddress,
-            },
-            {
-                path: 'addaddressdetail',
-                component: AddAddressDetail,
-            }
-        ]
-    },
-    {
-        path: '/balance',
-        component: BaseLayout,
-        children: [
-            {
-                path: '',
-                component: Balance,
-            },
-            {
-                path: 'detail',
-                component: BalanceDetail,
-            }
-        ]
-    },
-    {
-        path: '/discount',
-        component: BaseLayout,
-        children: [
-            {
-                path: '',
-                component: Discount,
-            },
-            {
-                path: 'hbDescription',
-                component: HbDescription,
-            },
-            {
-                path: 'hbHistory',
-                component: HbHistory,
-            },
-            {
-                path: 'commend',
-                component: Commend,
-            },
-            {
-                path: 'exchange',
-                component: Exchange,
-            },
-            {
-                path: 'coupon',
-                component: Coupon,
-            }
-        ]
-    },
-    {
-        path: '/points',
-        component: BaseLayout,
-        children: [
-            {
-                path: '',
-                component: Points,
-            },
-            {
-                path: 'detail',
-                component: PointsDetail,
-            }
-        ]
-    },
-    {
-        path: '/search/:geohash',
-        component: Search,
-    },
-    {
-        path: '/food',
-        component: Food,
-    },
-    {
-        path: '/shop',
-        component: BaseLayout,
-        children: [
-            {
-                path: '',
-                component: Shop,
-            },
-            {
-                path: 'shopDetail',
-                component: ShopDetail,
-            }
-        ]
-    },
-    {
-        path: '/order',
-        component: BaseLayout,
-        children: [
-            {
-                path: '',
-                component: Order,
-            },
-        ]
+  {
+    path: '/',
+    redirect: '/home',
+  },
+  {
+    path: '/home',
+    component: Home,
+  },
+  {
+    path: '/city/:cityid',
+    component: City
+  },
+  {
+    path: '/login',
+    component: Login
+  },
+  {
+    path: '/msite',
+    component: Msite,
+    meta: {
+      keepAlive: true
     }
+  },
+  {
+    path: '/profile',
+    component: BaseLayout,
+    children: [
+      {
+        path: '',
+        component: Profile,
+      },
+      {
+        path: 'info',
+        component: Info,
+      },
+      {
+        path: 'setusername',
+        component: SetUsername,
+      },
+      {
+        path: 'forget',
+        component: Forget,
+      },
+      {
+        path: 'address',
+        component: Address,
+      },
+      {
+        path: 'addaddress',
+        component: AddAddress,
+      },
+      {
+        path: 'addaddressdetail',
+        component: AddAddressDetail,
+      }
+    ]
+  },
+  {
+    path: '/balance',
+    component: BaseLayout,
+    children: [
+      {
+        path: '',
+        component: Balance,
+      },
+      {
+        path: 'detail',
+        component: BalanceDetail,
+      }
+    ]
+  },
+  {
+    path: '/discount',
+    component: BaseLayout,
+    children: [
+      {
+        path: '',
+        component: Discount,
+      },
+      {
+        path: 'hbDescription',
+        component: HbDescription,
+      },
+      {
+        path: 'hbHistory',
+        component: HbHistory,
+      },
+      {
+        path: 'commend',
+        component: Commend,
+      },
+      {
+        path: 'exchange',
+        component: Exchange,
+      },
+      {
+        path: 'coupon',
+        component: Coupon,
+      }
+    ]
+  },
+  {
+    path: '/points',
+    component: BaseLayout,
+    children: [
+      {
+        path: '',
+        component: Points,
+      },
+      {
+        path: 'detail',
+        component: PointsDetail,
+      }
+    ]
+  },
+  {
+    path: '/search/:geohash',
+    component: Search,
+  },
+  {
+    path: '/food',
+    component: Food,
+  },
+  {
+    path: '/shop',
+    component: BaseLayout,
+    children: [
+      {
+        path: '',
+        component: Shop,
+      },
+      {
+        path: 'shopDetail',
+        component: ShopDetail,
+      },
+      {
+        path: 'foodDetail',
+        component: FoodDetail,
+      }
+    ]
+  },
+  {
+    path: '/order',
+    component: BaseLayout,
+    children: [
+      {
+        path: '',
+        component: Order,
+      },
+    ]
+  }
 ]
