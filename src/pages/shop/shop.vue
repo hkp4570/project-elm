@@ -75,7 +75,15 @@ export default {
     // 当前商店的购物信息
     shopCart() {
       return {...this.cartList[this.shopId]};
-    }
+    },
+    // 配送费
+    deliveryFee: function () {
+      if (this.shopDetailData) {
+        return this.shopDetailData.float_delivery_fee;
+      } else {
+        return null;
+      }
+    },
   },
   created() {
     this.geohash = this.$route.query.geohash;
@@ -491,7 +499,8 @@ export default {
             <section class="gotopay" :class="{gotopay_acitvity: minimumOrderAmount <= 0}">
               <span class="gotopay_button_style"
                     v-if="minimumOrderAmount > 0">还差¥{{ minimumOrderAmount }}元起送</span>
-              <router-link :to="{path:'',query:{}}" class="gotopay_button_style" v-else>去结算</router-link>
+              <router-link :to="{path:'/confirmOrder',query:{geohash, shopId}}" class="gotopay_button_style" v-else>去结算
+              </router-link>
             </section>
           </section>
           <transition name="toggle-cart">
@@ -589,7 +598,7 @@ export default {
                       <time class="rated_at">{{ item.rated_at }}</time>
                     </header>
                     <ul class="food_img_ul">
-                      <li v-for="(item,index) in item_ratings" :key="index">
+                      <li v-for="(item,index) in item.item_ratings" :key="index">
                         <img :src="getImgPath(item.image_hash)" v-if="item.image_hash" alt="">
                       </li>
                     </ul>

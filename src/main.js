@@ -12,12 +12,12 @@ Vue.config.productionTip = false
 Vue.use(VueRouter)
 Vue.use(myPlugin)
 const router = new VueRouter({
-    routes,
-    mode: 'hash'
+  routes,
+  mode: 'hash'
 })
-window.store = store;
+// window.store = store;
 new Vue({
-    router,
-    store,
-    render: h => h(App),
+  router,
+  store,
+  render: h => h(App),
 }).$mount('#app')

@@ -1459,3 +1459,18 @@ export const getOrderList = (user_id, offset) => fetch('/bos/v2/users/' + user_i
   limit: 10,
   offset,
 });
+
+/**
+ * 检查订单
+ * @param geohash
+ * @param entities
+ * @param shopid
+ * @return {Promise<unknown>|*}
+ */
+export const checkout = (geohash, entities, shopid) => fetch('/v1/carts/checkout', {
+  come_from: "web",
+  geohash,
+  entities,
+  restaurant_id: shopid,
+}, 'POST');
+

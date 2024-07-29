@@ -26,6 +26,7 @@ const Shop = () => import(/* webpackChunkName: "Shop" */ '../pages/shop/shop.vue
 const ShopDetail = () => import(/* webpackChunkName: "ShopDetail" */ '../pages/shop/children/shopDetail.vue')
 const Order = () => import(/* webpackChunkName: "Order" */ '../pages/order/order.vue')
 const FoodDetail = () => import(/* webpackChunkName: "FoodDetail" */ '../pages/shop/children/foodDetail.vue')
+const ConfirmOrder = () => import(/* webpackChunkName: "ConfirmOrder" */ '../pages/confirmOrder/confirmOrder.vue')
 
 export default [
   {
@@ -177,6 +178,16 @@ export default [
         path: '',
         component: Order,
       },
+    ]
+  },
+  {
+    path: '/confirmOrder',
+    component: BaseLayout,
+    children: [
+      {
+        path: '',
+        component: ConfirmOrder
+      }
     ]
   }
 ]
