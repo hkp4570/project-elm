@@ -3,6 +3,7 @@ import {mapMutations, mapState} from 'vuex';
 import HeadTop from '@/components/header/head.vue';
 import Loading from '@/components/common/loading.vue';
 import {checkout, getAddressList} from '@/service/getData';
+import {imgBaseUrl} from '@/utils/index';
 
 export default {
   components: {
@@ -16,6 +17,9 @@ export default {
       geohash: '',
       shopId: null,
       checkoutData: null,
+      showPayWay: false,
+      payWayId: 1, //付款方式
+      imgBaseUrl,
     }
   },
   created() {
@@ -31,7 +35,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['cartList', 'userInfo', 'chooseAddress'])
+    ...mapState(['cartList', 'userInfo', 'chooseAddress', 'remarkText', 'inputText'])
   },
   methods: {
     ...mapMutations(['init_buyCard', 'save_shopId', 'save_cart_id_sig', 'choose_address']),
@@ -80,10 +84,24 @@ export default {
           return '#3190e8';
       }
     },
+    // 显示付款方式
+    showPayWayFun() {
+      this.showPayWay = !this.showPayWay;
+    },
+    //选择付款方式
+    choosePayWay(is_online_payment, id) {
+      if (is_online_payment) {
+        this.showPayWay = !this.showPayWay;
+        this.payWayId = id;
+      }
+    },
+    // 确认订单
+    confirmOrder() {
+
+    }
   },
   watch: {
     userInfo: function (value) {
-      console.log(value, 'value');
       if (value && value.user_id) {
         this.initAddress();
       }
@@ -96,7 +114,7 @@ export default {
   <div class="confirmOrderContainer">
     <head-top head-title="确认订单" :go-back="true" signin-up='confirmOrder'></head-top>
     <section v-if="!showLoading">
-      <router-link :to="{path:'', query:{id:checkoutData.cart.id,sig:checkoutData.sig}}"
+      <router-link :to="{path:'/confirmOrder/chooseAddress', query:{id:checkoutData.cart.id,sig:checkoutData.sig}}"
                    class="address_container">
         <div class="address_empty_left">
           <svg class="location_icon">
@@ -132,7 +150,7 @@ export default {
       <section class="pay_way container_style">
         <header class="header_style">
           <span>支付方式</span>
-          <div class="more_type" @click="showPayWayFun">
+          <div class="more_type" @click.stop="showPayWayFun">
             <span>在线支付</span>
             <svg class="address_empty_right">
               <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#arrow-right"></use>
@@ -194,25 +212,25 @@ export default {
                      :class="{support_is_available: checkoutData.invoice.is_available}">
           <span>发票抬头</span>
           <span>
-                        {{ checkoutData.invoice.status_text }}
-                        <svg class="address_empty_right">
-                            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#arrow-right"></use>
-                        </svg>
-                    </span>
+                              {{ checkoutData.invoice.status_text }}
+                              <svg class="address_empty_right">
+                                  <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#arrow-right"></use>
+                              </svg>
+                          </span>
         </router-link>
       </section>
       <section class="confrim_order">
         <p>待支付 ¥{{ checkoutData.cart.total }}</p>
-        <p @click="confrimOrder">确认下单</p>
+        <p @click.stop="confirmOrder">确认下单</p>
       </section>
       <transition name="fade">
-        <div class="cover" v-if="showPayWay" @click="showPayWayFun"></div>
+        <div class="cover" v-if="showPayWay" @click.stop="showPayWayFun"></div>
       </transition>
       <transition name="slid_up">
         <div class="choose_type_Container" v-if="showPayWay">
           <header>支付方式</header>
           <ul>
-            <li v-for="item in checkoutData.payments" :key="item.id" :class="{choose: payWayId == item.id}">
+            <li v-for="item in checkoutData.payments" :key="item.id" :class="{choose: payWayId === item.id}">
               <span>{{ item.name }}<span v-if="!item.is_online_payment">{{ item.description }}</span></span>
               <svg class="address_empty_right" @click="choosePayWay(item.is_online_payment, item.id)">
                 <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#select"></use>
