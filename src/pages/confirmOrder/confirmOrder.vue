@@ -2,7 +2,7 @@
 import {mapMutations, mapState} from 'vuex';
 import HeadTop from '@/components/header/head.vue';
 import Loading from '@/components/common/loading.vue';
-import {checkout} from '@/service/getData';
+import {checkout, getAddressList} from '@/service/getData';
 
 export default {
   components: {
@@ -31,10 +31,10 @@ export default {
     }
   },
   computed: {
-    ...mapState(['cartList'])
+    ...mapState(['cartList', 'userInfo', 'chooseAddress'])
   },
   methods: {
-    ...mapMutations(['init_buyCard', 'save_shopId']),
+    ...mapMutations(['init_buyCard', 'save_shopId', 'save_cart_id_sig', 'choose_address']),
     async initData() {
       const newArr = new Array();
       Object.values(this.shopCard).forEach(categoryItem => {
@@ -57,7 +57,36 @@ export default {
       })
       // 检验订单是否满足条件
       this.checkoutData = await checkout(this.geohash, [newArr], this.shopId);
+      console.log(this.checkoutData, 'this.checkoutData');
+      this.save_cart_id_sig({cart_id: this.checkoutData.cart_id, sig: this.checkoutData.sig});
+      this.initAddress();
       this.showLoading = false;
+    },
+    // 获取收货地址
+    async initAddress() {
+      if (this.userInfo && this.userInfo.user_id) {
+        const result = await getAddressList(this.userInfo.user_id);
+        if (Array.isArray(result) && result.length) {
+          this.choose_address({address: result[0], index: 0});
+
+        }
+      }
+    },
+    iconColor(name) {
+      switch (name) {
+        case '公司':
+          return '#4cd964';
+        case '学校':
+          return '#3190e8';
+      }
+    },
+  },
+  watch: {
+    userInfo: function (value) {
+      console.log(value, 'value');
+      if (value && value.user_id) {
+        this.initAddress();
+      }
     }
   }
 }
@@ -65,8 +94,133 @@ export default {
 
 <template>
   <div class="confirmOrderContainer">
-    <section v-show="!showLoading">
-      <head-top head-title="确认订单" :go-back="true" signin-up='confirmOrder'></head-top>
+    <head-top head-title="确认订单" :go-back="true" signin-up='confirmOrder'></head-top>
+    <section v-if="!showLoading">
+      <router-link :to="{path:'', query:{id:checkoutData.cart.id,sig:checkoutData.sig}}"
+                   class="address_container">
+        <div class="address_empty_left">
+          <svg class="location_icon">
+            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#location"></use>
+          </svg>
+          <div class="add_address" v-if="!chooseAddress">请添加一个收货地址</div>
+          <div v-else class="address_detail_container">
+            <header>
+              <span>{{ chooseAddress.name }}</span>
+              <span>{{ chooseAddress.sex === 1 ? '先生' : '女士' }}</span>
+              <span>{{ chooseAddress.phone }}</span>
+            </header>
+            <div class="address_detail">
+                    <span v-if="chooseAddress.tag"
+                          :style="{backgroundColor: iconColor(chooseAddress.tag)}">{{
+                        chooseAddress.tag
+                      }}</span>
+              <p>{{ chooseAddress.address_detail }}</p>
+            </div>
+          </div>
+        </div>
+        <svg class="address_empty_right">
+          <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#arrow-right"></use>
+        </svg>
+      </router-link>
+      <section class="delivery_model container_style">
+        <p class="deliver_text">送达时间</p>
+        <section class="deliver_time">
+          <p>尽快送达 | 预计 {{ checkoutData.delivery_reach_time }}</p>
+          <p v-if="checkoutData.cart.is_deliver_by_fengniao">蜂鸟专送</p>
+        </section>
+      </section>
+      <section class="pay_way container_style">
+        <header class="header_style">
+          <span>支付方式</span>
+          <div class="more_type" @click="showPayWayFun">
+            <span>在线支付</span>
+            <svg class="address_empty_right">
+              <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#arrow-right"></use>
+            </svg>
+          </div>
+        </header>
+        <section class="hongbo">
+          <span>红包</span>
+          <span>暂时只在饿了么 APP 中支持</span>
+        </section>
+      </section>
+      <section class="food_list">
+        <header v-if="checkoutData.cart.restaurant_info">
+          <img :src="imgBaseUrl + checkoutData.cart.restaurant_info.image_path">
+          <span>{{ checkoutData.cart.restaurant_info.name }}</span>
+        </header>
+        <ul class="food_list_ul" v-if="checkoutData.cart.groups">
+          <li v-for="item in checkoutData.cart.groups[0]" :key="item.id" class="food_item_style">
+            <p class="food_name ellipsis">{{ item.name }}</p>
+            <div class="num_price">
+              <span>x {{ item.quantity }}</span>
+              <span>¥{{ item.price }}</span>
+            </div>
+          </li>
+        </ul>
+        <div class="food_item_style" v-if="checkoutData.cart.extra">
+          <p class="food_name ellipsis">{{ checkoutData.cart.extra[0].name }}</p>
+          <div class="num_price">
+            <span></span>
+            <span>¥ {{ checkoutData.cart.extra[0].price }}</span>
+          </div>
+        </div>
+        <div class="food_item_style">
+          <p class="food_name ellipsis">配送费</p>
+          <div class="num_price">
+            <span></span>
+            <span>¥ {{ checkoutData.cart.deliver_amount || 0 }}</span>
+          </div>
+        </div>
+        <div class="food_item_style total_price">
+          <p class="food_name ellipsis">订单 ¥{{ checkoutData.cart.total }}</p>
+          <div class="num_price">
+            <span>待支付 ¥{{ checkoutData.cart.total }}</span>
+          </div>
+        </div>
+      </section>
+      <section class="pay_way container_style">
+        <router-link :to='{path: "/confirmOrder/remark", query: {id: checkoutData.cart.id, sig: checkoutData.sig}}'
+                     class="header_style">
+          <span>订单备注</span>
+          <div class="more_type">
+            <span class="ellipsis">{{ remarkText || inputText ? remarklist : '口味、偏好等' }}</span>
+            <svg class="address_empty_right">
+              <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#arrow-right"></use>
+            </svg>
+          </div>
+        </router-link>
+        <router-link :to="checkoutData.invoice.is_available? '/confirmOrder/invoice': ''" class="hongbo"
+                     :class="{support_is_available: checkoutData.invoice.is_available}">
+          <span>发票抬头</span>
+          <span>
+                        {{ checkoutData.invoice.status_text }}
+                        <svg class="address_empty_right">
+                            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#arrow-right"></use>
+                        </svg>
+                    </span>
+        </router-link>
+      </section>
+      <section class="confrim_order">
+        <p>待支付 ¥{{ checkoutData.cart.total }}</p>
+        <p @click="confrimOrder">确认下单</p>
+      </section>
+      <transition name="fade">
+        <div class="cover" v-if="showPayWay" @click="showPayWayFun"></div>
+      </transition>
+      <transition name="slid_up">
+        <div class="choose_type_Container" v-if="showPayWay">
+          <header>支付方式</header>
+          <ul>
+            <li v-for="item in checkoutData.payments" :key="item.id" :class="{choose: payWayId == item.id}">
+              <span>{{ item.name }}<span v-if="!item.is_online_payment">{{ item.description }}</span></span>
+              <svg class="address_empty_right" @click="choosePayWay(item.is_online_payment, item.id)">
+                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#select"></use>
+              </svg>
+            </li>
+          </ul>
+        </div>
+      </transition>
     </section>
     <loading v-show="showLoading"/>
   </div>

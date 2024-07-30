@@ -114,5 +114,15 @@ export default {
   },
   save_shopId(state, shopId) {
     state.shopId = shopId;
+  },
+  // 下单后保存购物车id和购物车sig
+  save_cart_id_sig(state, {cart_id, sig}) {
+    state.cartId = cart_id;
+    state.sig = sig;
+  },
+  // 下单时选择的收货地址
+  choose_address(state, {address, index}) {
+    state.chooseAddress = address;
+    state.addressIndex = index;
   }
 }
