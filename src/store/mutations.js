@@ -131,5 +131,9 @@ export default {
   },
   confirm_address(state, newAddress) {
     state.newAddress.push(newAddress);
+  },
+  confirm_remark(state, {remarkText, inputText}) {
+    state.remarkText = remarkText;
+    state.inputText = inputText;
   }
 }

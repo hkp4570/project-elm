@@ -1474,3 +1474,13 @@ export const checkout = (geohash, entities, shopid) => fetch('/v1/carts/checkout
   restaurant_id: shopid,
 }, 'POST');
 
+/**
+ * 下单时的备注列表
+ * @param id
+ * @param sig
+ * @return {Promise<unknown>|*}
+ */
+export const getRemark = (id, sig) => fetch('/v1/carts/' + id + '/remarks', {
+  sig
+});
+

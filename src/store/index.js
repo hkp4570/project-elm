@@ -23,6 +23,8 @@ const state = {
   addressIndex: null,// 选择地址的索引值
   searchAddress: null, // 选择搜索的地址
   newAddress: [], //确认订单页新的地址
+  remarkText: null,//可选备注内容
+  inputText: '',//输入备注内容
 }
 
 export default new Vuex.Store({

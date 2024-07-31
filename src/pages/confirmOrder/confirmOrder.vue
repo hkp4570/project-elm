@@ -35,7 +35,22 @@ export default {
     }
   },
   computed: {
-    ...mapState(['cartList', 'userInfo', 'chooseAddress', 'remarkText', 'inputText'])
+    ...mapState(['cartList', 'userInfo', 'chooseAddress', 'remarkText', 'inputText']),
+    remarklist: function () {
+      if (!this.remarkText && !this.inputText) return '口味、偏好等';
+      let str = new String;
+      if (this.remarkText) {
+        Object.values(this.remarkText).forEach(item => {
+          str += item[1] + '，';
+        })
+      }
+      //是否有自定义备注，分开处理
+      if (this.inputText) {
+        return str + this.inputText;
+      } else {
+        return str.substr(0, str.lastIndexOf('，'));
+      }
+    }
   },
   methods: {
     ...mapMutations(['init_buyCard', 'save_shopId', 'save_cart_id_sig', 'choose_address']),
@@ -202,22 +217,21 @@ export default {
                      class="header_style">
           <span>订单备注</span>
           <div class="more_type">
-            <span class="ellipsis">{{ remarkText || inputText ? remarklist : '口味、偏好等' }}</span>
+            <!--<span class="ellipsis">{{ remarkText || inputText ? remarklist : '口味、偏好等' }}</span>-->
+            <span class="ellipsis">{{ remarklist }}</span>
             <svg class="address_empty_right">
               <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#arrow-right"></use>
             </svg>
           </div>
         </router-link>
-        <router-link :to="checkoutData.invoice.is_available? '/confirmOrder/invoice': ''" class="hongbo"
-                     :class="{support_is_available: checkoutData.invoice.is_available}">
+        <div class="hongbo" :class="{support_is_available: checkoutData.invoice.is_available}">
           <span>发票抬头</span>
-          <span>
-                              {{ checkoutData.invoice.status_text }}
-                              <svg class="address_empty_right">
-                                  <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#arrow-right"></use>
-                              </svg>
-                          </span>
-        </router-link>
+          <span>{{ checkoutData.invoice.status_text }}
+             <svg class="address_empty_right">
+               <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#arrow-right"></use>
+             </svg>
+          </span>
+        </div>
       </section>
       <section class="confrim_order">
         <p>待支付 ¥{{ checkoutData.cart.total }}</p>
