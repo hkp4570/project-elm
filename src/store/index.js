@@ -25,6 +25,9 @@ const state = {
   newAddress: [], //确认订单页新的地址
   remarkText: null,//可选备注内容
   inputText: '',//输入备注内容
+  orderParam: null,//订单的参数
+  cartPrice: null, //会员卡价格
+  orderMessage: null, // 订单返回值
 }
 
 export default new Vuex.Store({

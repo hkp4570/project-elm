@@ -31,7 +31,7 @@ const ChooseAddress = () => import(/* webpackChunkName: "ChooseAddress" */ '../p
 const OrderAddAddress = () => import(/* webpackChunkName: "AddAddress" */ '../pages/confirmOrder/children/addAddress.vue')
 const SearchAddress = () => import(/* webpackChunkName: "SearchAddress" */ '../pages/confirmOrder/children/searchAddress.vue')
 const Remark = () => import(/* webpackChunkName: "Remark" */ '../pages/confirmOrder/children/remark.vue')
-
+const Payment = () => import(/* webpackChunkName: "Payment" */ '../pages/confirmOrder/children/payment.vue')
 
 export default [
   {
@@ -208,6 +208,10 @@ export default [
       {
         path: 'remark',
         component: Remark,
+      },
+      {
+        path: 'payment',
+        component: Payment,
       }
     ]
   }

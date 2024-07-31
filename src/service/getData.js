@@ -1484,3 +1484,25 @@ export const getRemark = (id, sig) => fetch('/v1/carts/' + id + '/remarks', {
   sig
 });
 
+/**
+ * 下单
+ * @param user_id
+ * @param cart_id
+ * @param address_id
+ * @param description
+ * @param entities
+ * @param geohash
+ * @param sig
+ * @return {Promise<unknown>|*}
+ */
+export const placeOrders = (user_id, cart_id, address_id, description, entities, geohash, sig) => fetch('/v1/users/' + user_id + '/carts/' + cart_id + '/orders', {
+  address_id,
+  come_from: "mobile_web",
+  deliver_time: "",
+  description,
+  entities,
+  geohash,
+  paymethod_id: 1,
+  sig,
+}, 'POST');
+

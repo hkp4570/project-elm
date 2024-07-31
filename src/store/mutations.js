@@ -132,8 +132,18 @@ export default {
   confirm_address(state, newAddress) {
     state.newAddress.push(newAddress);
   },
+  // 订单备注
   confirm_remark(state, {remarkText, inputText}) {
     state.remarkText = remarkText;
     state.inputText = inputText;
+  },
+  // 订单参数
+  save_order_param(state, orderParam) {
+    state.orderParam = orderParam;
+  },
+  // 下单成功保存返回值
+  order_success(state, order) {
+    state.cartPrice = null;
+    state.orderMessage = order;
   }
 }

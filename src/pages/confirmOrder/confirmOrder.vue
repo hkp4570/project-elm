@@ -1,14 +1,17 @@
 <script>
 import {mapMutations, mapState} from 'vuex';
 import HeadTop from '@/components/header/head.vue';
+import AlterTip from "@/components/common/alterTip.vue";
 import Loading from '@/components/common/loading.vue';
-import {checkout, getAddressList} from '@/service/getData';
+import {checkout, getAddressList, placeOrders} from '@/service/getData';
 import {imgBaseUrl} from '@/utils/index.js';
+import {markRaw} from "vue";
 
 export default {
   components: {
     HeadTop,
     Loading,
+    AlterTip,
   },
   data() {
     return {
@@ -20,6 +23,8 @@ export default {
       showPayWay: false,
       payWayId: 1, //付款方式
       imgBaseUrl,
+      showAlter: false,
+      alterText: null,
     }
   },
   created() {
@@ -53,7 +58,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['init_buyCard', 'save_shopId', 'save_cart_id_sig', 'choose_address']),
+    ...mapMutations(['init_buyCard', 'save_shopId', 'save_cart_id_sig', 'choose_address', 'save_order_param', 'order_success']),
     async initData() {
       const newArr = new Array();
       Object.values(this.shopCard).forEach(categoryItem => {
@@ -76,7 +81,6 @@ export default {
       })
       // 检验订单是否满足条件
       this.checkoutData = await checkout(this.geohash, [newArr], this.shopId);
-      console.log(this.checkoutData, 'this.checkoutData');
       this.save_cart_id_sig({cart_id: this.checkoutData.cart_id, sig: this.checkoutData.sig});
       this.initAddress();
       this.showLoading = false;
@@ -87,7 +91,6 @@ export default {
         const result = await getAddressList(this.userInfo.user_id);
         if (Array.isArray(result) && result.length) {
           this.choose_address({address: result[0], index: 0});
-
         }
       }
     },
@@ -111,8 +114,30 @@ export default {
       }
     },
     // 确认订单
-    confirmOrder() {
-
+    async confirmOrder() {
+      if (!this.userInfo || !this.userInfo.user_id) {
+        this.showAlter = true;
+        this.alterText = '请登录';
+      } else if (!this.chooseAddress) {
+        this.showAlter = true;
+        this.alterText = '请选择收货地址';
+      }
+      this.save_order_param({
+        user_id: this.userInfo.user_id,
+        cart_id: this.checkoutData.cart.id,
+        address_id: this.chooseAddress.id,
+        description: this.remarklist,
+        entities: this.checkoutData.cart.groups,
+        geohash: this.geohash,
+        sig: this.checkoutData.sig,
+      })
+      // 发送订单消息
+      const orderRes = await placeOrders(this.userInfo.user_id, this.checkoutData.cart.id, this.chooseAddress.id, this.remarklist, this.checkoutData.cart.groups, this.geohash, this.checkoutData.sig)
+      console.log(orderRes, 'orderRes===');
+      if (orderRes.status === 1) {
+        this.order_success(orderRes);
+        this.$router.push('/confirmOrder/payment');
+      }
     }
   },
   watch: {
@@ -255,6 +280,7 @@ export default {
       </transition>
     </section>
     <loading v-show="showLoading"/>
+    <AlterTip v-if="showAlter" @closeTip="showAlter=false" :alterText="alterText"></AlterTip>
   </div>
 </template>
 
