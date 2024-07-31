@@ -28,6 +28,8 @@ const Order = () => import(/* webpackChunkName: "Order" */ '../pages/order/order
 const FoodDetail = () => import(/* webpackChunkName: "FoodDetail" */ '../pages/shop/children/foodDetail.vue')
 const ConfirmOrder = () => import(/* webpackChunkName: "ConfirmOrder" */ '../pages/confirmOrder/confirmOrder.vue')
 const ChooseAddress = () => import(/* webpackChunkName: "ChooseAddress" */ '../pages/confirmOrder/children/chooseAddress.vue')
+const OrderAddAddress = () => import(/* webpackChunkName: "AddAddress" */ '../pages/confirmOrder/children/addAddress.vue')
+const SearchAddress = () => import(/* webpackChunkName: "SearchAddress" */ '../pages/confirmOrder/children/searchAddress.vue')
 
 export default [
   {
@@ -192,6 +194,14 @@ export default [
       {
         path: 'chooseAddress',
         component: ChooseAddress
+      },
+      {
+        path: 'addAddress',
+        component: OrderAddAddress
+      },
+      {
+        path: 'searchAddress',
+        component: SearchAddress,
       }
     ]
   }

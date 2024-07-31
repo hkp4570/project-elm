@@ -124,5 +124,12 @@ export default {
   choose_address(state, {address, index}) {
     state.chooseAddress = address;
     state.addressIndex = index;
+  },
+  // 选择搜索到的地址
+  choose_search_address(state, place) {
+    state.searchAddress = place;
+  },
+  confirm_address(state, newAddress) {
+    state.newAddress.push(newAddress);
   }
 }

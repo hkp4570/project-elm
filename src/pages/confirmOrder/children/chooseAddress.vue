@@ -1,6 +1,6 @@
 <script>
 import HeadTop from '@/components/header/head.vue';
-import {mapState} from 'vuex';
+import {mapState, mapMutations} from 'vuex';
 import {getAddressList} from '@/service/getData';
 
 export default {
@@ -21,7 +21,7 @@ export default {
     this.sig = this.$route.query.sig;
   },
   computed: {
-    ...mapState(['userInfo', 'addressIndex']),
+    ...mapState(['userInfo', 'addressIndex', 'newAddress']),
     defaultIndex: function () {
       if (this.addressIndex) {
         return this.addressIndex;
@@ -30,7 +30,11 @@ export default {
       }
     }
   },
+  mounted() {
+    this.initData();
+  },
   methods: {
+    ...mapMutations(['choose_address']),
     async initData() {
       this.addressList = [];
       this.deliverable = [];
@@ -54,12 +58,19 @@ export default {
           return '#3190e8';
       }
     },
+    chooseAddress(address, index) {
+      this.choose_address({address, index});
+      this.$router.go(-1);
+    }
   },
   watch: {
     userInfo: function (value) {
       if (value && value.user_id) {
         this.initData();
       }
+    },
+    newAddress: function () {
+      this.initData();
     }
   }
 }
@@ -68,7 +79,7 @@ export default {
 <template>
   <div class="rating_page">
     <head-top head-title="选择地址" :go-back="true"></head-top>
-    <router-link to="" class="add_icon_footer">
+    <router-link to="/confirmOrder/addAddress" class="add_icon_footer">
       <img src="../../../assets/add_address.png" height="24" width="24" alt="">
       <span>新增收货地址</span>
     </router-link>

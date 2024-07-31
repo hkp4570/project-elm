@@ -3,7 +3,7 @@ import {mapMutations, mapState} from 'vuex';
 import HeadTop from '@/components/header/head.vue';
 import Loading from '@/components/common/loading.vue';
 import {checkout, getAddressList} from '@/service/getData';
-import {imgBaseUrl} from '@/utils/index';
+import {imgBaseUrl} from '@/utils/index.js';
 
 export default {
   components: {
@@ -68,7 +68,7 @@ export default {
     },
     // 获取收货地址
     async initAddress() {
-      if (this.userInfo && this.userInfo.user_id) {
+      if (this.userInfo && this.userInfo.user_id && !this.chooseAddress) {
         const result = await getAddressList(this.userInfo.user_id);
         if (Array.isArray(result) && result.length) {
           this.choose_address({address: result[0], index: 0});

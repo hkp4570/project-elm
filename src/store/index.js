@@ -20,7 +20,9 @@ const state = {
   cartId: null, //购物车id
   sig: null,//购物车sig
   chooseAddress: null,//选择地址
-  addressIndex: null,//选择地址的索引值
+  addressIndex: null,// 选择地址的索引值
+  searchAddress: null, // 选择搜索的地址
+  newAddress: [], //确认订单页新的地址
 }
 
 export default new Vuex.Store({
