@@ -1506,3 +1506,17 @@ export const placeOrders = (user_id, cart_id, address_id, description, entities,
   sig,
 }, 'POST');
 
+/**
+ * 重新发送订单验证码
+ * @param merchantOrderNo
+ * @param userId
+ * @return {Promise<unknown>|*}
+ */
+export const payRequest = (merchantOrderNo, userId) => fetch('/v1/payment/queryOrder', {
+  merchantId: 5,
+  merchantOrderNo,
+  source: 'MOBILE_WAP',
+  userId,
+  version: '1.0.0',
+});
+
