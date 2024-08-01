@@ -1,40 +1,24 @@
-# my-project
+## 关于
 
-## Project setup
+--- ---
+本项目为[vue2-elm](https://github.com/bailicangdu/vue2-elm)的精简版本。实现了原项目中的大部分功能。适合于初学vue的朋友。
 
-```
-npm install
-```
+## 项目运行
 
-### Compiles and hot-reloads for development
+--- ---
 
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-
-```
-npm run build
+```javascript
+'git clone https://github.com/hkp4570/project-elm.git';
+'cd project-elm';
+'npm install';
+'npm run serve';
 ```
 
-### Lints and fixes files
+## 接口
 
-```
-npm run lint
-```
+--- ---
 
-### Customize configuration
+1. 可以克隆[project-node-elm](https://github.com/hkp4570/project-node-elm)项目到本地，这里写好了接口，直接使用即可。
+2. 也可以代理到 `https://elm.cangdu.org/` 这个地址进行开发。
 
-See [Configuration Reference](https://cli.vuejs.org/config/).
-
-### 购买页面 shop
-
-1. 从店铺列表跳转到购买页面，携带了shopid参数。
-
-2. 获取当前商铺的详细信息，获取该商铺的所有的商品信息。
-
-3. 加入购物车后，监听到数据变化，重新去计算值。
-
-test-elm
-123456
+*项目的详细信息可以查看[原项目](https://github.com/bailicangdu/vue2-elm)说明*
