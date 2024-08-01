@@ -32,6 +32,7 @@ const OrderAddAddress = () => import(/* webpackChunkName: "AddAddress" */ '../pa
 const SearchAddress = () => import(/* webpackChunkName: "SearchAddress" */ '../pages/confirmOrder/children/searchAddress.vue')
 const Remark = () => import(/* webpackChunkName: "Remark" */ '../pages/confirmOrder/children/remark.vue')
 const Payment = () => import(/* webpackChunkName: "Payment" */ '../pages/confirmOrder/children/payment.vue')
+const OrderDetail = () => import(/* webpackChunkName: "OrderDetail" */ '../pages/order/children/orderDetail.vue')
 
 export default [
   {
@@ -183,6 +184,10 @@ export default [
         path: '',
         component: Order,
       },
+      {
+        path: 'orderDetail/:order_id',
+        component: OrderDetail,
+      }
     ]
   },
   {

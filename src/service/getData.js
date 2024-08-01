@@ -1520,3 +1520,11 @@ export const payRequest = (merchantOrderNo, userId) => fetch('/v1/payment/queryO
   version: '1.0.0',
 });
 
+/**
+ * 获取订单详情
+ * @param user_id
+ * @param orderid
+ * @return {Promise<unknown>|*}
+ */
+export const getOrderDetail = (user_id, orderid) => fetch('/bos/v1/users/' + user_id + '/orders/' + orderid + '/snapshot');
+

@@ -2,7 +2,7 @@
 import HeadTop from "@/components/header/head.vue";
 import FootGuide from "@/components/footer/footGuide.vue";
 import ComputeTime from "@/components/common/computeTime.vue";
-import {mapState} from 'vuex';
+import {mapState, mapMutations} from 'vuex';
 import {getOrderList} from '@/service/getData.js';
 import Loading from '@/components/common/loading.vue';
 import {loadMore} from '@/mixin/minix.js';
@@ -32,6 +32,7 @@ export default {
     this.initData();
   },
   methods: {
+    ...mapMutations(['save_order']),
     async initData() {
       if (this.userInfo && this.userInfo.user_id) {
         let res = await getOrderList(this.userInfo.user_id, this.offset);
@@ -56,6 +57,13 @@ export default {
         return
       }
       this.preventRepeat = false;
+    },
+    // 显示详情
+    showDetail(item) {
+      // console.log(item, 'item')
+      this.save_order(item);
+      this.preventRepeat = true;
+      this.$router.push('/order/orderDetail/' + item.unique_id);
     }
   },
   watch: {

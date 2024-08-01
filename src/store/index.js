@@ -28,6 +28,7 @@ const state = {
   orderParam: null,//订单的参数
   cartPrice: null, //会员卡价格
   orderMessage: null, // 订单返回值
+  orderDetail: null, // 订单详情
 }
 
 export default new Vuex.Store({

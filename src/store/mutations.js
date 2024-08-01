@@ -145,5 +145,8 @@ export default {
   order_success(state, order) {
     state.cartPrice = null;
     state.orderMessage = order;
+  },
+  save_order(state, detail) {
+    state.orderDetail = detail;
   }
 }
